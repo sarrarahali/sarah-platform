@@ -48,11 +48,7 @@ const buildApp = async (sourcePath, appName, isDir = false) => {
       }
     } catch (e) {}
 
-    execSync(`docker-compose build`, {
-      stdio: 'inherit',
-      cwd: buildDir
-    })
-
+    execSync(`docker-compose build`, { stdio: 'inherit', cwd: buildDir })
     execSync(`docker-compose up -d`, {
       stdio: 'inherit',
       cwd: buildDir,
@@ -60,15 +56,7 @@ const buildApp = async (sourcePath, appName, isDir = false) => {
     })
 
     console.log(`[BUILD] Docker Compose started successfully`)
-
-    return {
-      imageName: `compose-${appName}`,
-      buildDir,
-      buildId,
-      exposePort,
-      projectType: 'compose',
-      isCompose: true
-    }
+    return { imageName: `compose-${appName}`, buildDir, buildId, exposePort, projectType: 'compose', isCompose: true }
   }
 
   // ─── 2. Existing Dockerfile ───────────────────────────────────────────────
@@ -93,10 +81,7 @@ const buildApp = async (sourcePath, appName, isDir = false) => {
     console.log(`[BUILD] Attempting Nixpacks build...`)
     execSync(
       `nixpacks build ${buildDir} --name ${imageName} --no-cache`,
-      {
-        stdio: 'inherit',
-        env: { ...process.env, DOCKER_BUILDKIT: '0' }
-      }
+      { stdio: 'inherit', env: { ...process.env, DOCKER_BUILDKIT: '0' } }
     )
     console.log(`[BUILD] Nixpacks build successful: ${imageName}`)
 
@@ -156,6 +141,15 @@ EXPOSE 3000
 CMD ["node", "${backendMain}"]
 `
     exposePort = 3000
+
+  } else if (files.includes('index.html')) {
+    console.log(`[BUILD] Static HTML project detected`)
+    dockerfile = `FROM nginx:alpine
+COPY . /usr/share/nginx/html
+EXPOSE 80
+CMD ["nginx", "-g", "daemon off;"]
+`
+    exposePort = 80
 
   } else if (files.includes('package.json')) {
     const pkg = JSON.parse(fs.readFileSync(path.join(buildDir, 'package.json'), 'utf8'))
@@ -233,12 +227,13 @@ CMD ["python", "app.py"]
     }
 
   } else {
-    dockerfile = `FROM node:18-alpine
+    dockerfile = `FROM nginx:alpine
 WORKDIR /app
 COPY . .
-EXPOSE 3000
-CMD ["sh", "-c", "node $(ls *.js | head -1)"]
+EXPOSE 80
+CMD ["nginx", "-g", "daemon off;"]
 `
+    exposePort = 80
   }
 
   fs.writeFileSync(path.join(buildDir, 'Dockerfile'), dockerfile)

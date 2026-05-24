@@ -174,39 +174,67 @@ export default function AppDetail() {
           <p style={{ color: '#aaa', fontSize: '0.9rem' }}>Aucun deploiement</p>
         )}
         {deployments.map(d => {
-          const s = statusColor(d.status)
-          return (
-            <div key={d.id} style={{
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-              padding: '0.75rem 1rem',
-              borderRadius: '8px',
-              border: '1px solid #e2e8f0',
-              marginBottom: '0.5rem'
-            }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                <span style={{
-                  background: s.bg,
-                  color: s.color,
-                  border: `1px solid ${s.border}`,
-                  padding: '2px 10px',
-                  borderRadius: '20px',
-                  fontSize: '0.75rem',
-                  fontWeight: '600'
-                }}>
-                  {d.status}
-                </span>
-                <span style={{ fontSize: '0.85rem', color: '#555' }}>
-                  {d.image_name || 'Build en cours'}
-                </span>
-              </div>
-              <span style={{ fontSize: '0.8rem', color: '#aaa' }}>
-                {new Date(d.created_at).toLocaleString()}
-              </span>
-            </div>
-          )
-        })}
+  const s = statusColor(d.status)
+  return ( 
+    <div key={d.id} style={{
+      padding: '0.75rem 1rem',
+      borderRadius: '8px',
+      border: '1px solid #e2e8f0',
+      marginBottom: '0.5rem'
+    }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+          <span style={{
+            background: s.bg,
+            color: s.color,
+            border: `1px solid ${s.border}`,
+            padding: '2px 10px',
+            borderRadius: '20px',
+            fontSize: '0.75rem',
+            fontWeight: '600'
+          }}>
+            {d.status}
+          </span>
+          <span style={{ fontSize: '0.85rem', color: '#555' }}>
+            {d.image_name || 'Build en cours'}
+          </span>
+        </div>
+        <span style={{ fontSize: '0.8rem', color: '#aaa' }}>
+          {new Date(d.created_at).toLocaleString()}
+        </span>
+      </div>
+      {d.status === 'failed' && d.logs && (
+  <div style={{
+    marginTop: '0.75rem',
+    background: '#fff5f5',
+    border: '1px solid #fc8181',
+    padding: '1rem',
+    borderRadius: '8px',
+  }}>
+    <div style={{
+      display: 'flex',
+      alignItems: 'center',
+      gap: '0.5rem',
+      marginBottom: '0.5rem'
+    }}>
+      <span style={{ fontSize: '1rem' }}>❌</span>
+      <strong style={{ color: '#e53e3e', fontSize: '0.9rem' }}>
+        Echec du deploiement
+      </strong>
+    </div>
+    <p style={{
+      color: '#c53030',
+      fontSize: '0.85rem',
+      margin: 0,
+      lineHeight: '1.5'
+    }}>
+      {d.logs}
+    </p>
+  </div>
+)}
+    </div>
+  )
+})}
       </div>
 
       <div style={{

@@ -12,7 +12,7 @@ export default function Dashboard() {
   const [gitName, setGitName] = useState('')
   const [gitLoading, setGitLoading] = useState(false)
   const [gitError, setGitError] = useState('')
-  const { token } = useAuth()
+  const { token, logout } = useAuth()
   const navigate = useNavigate()
 
   const fetchApps = async () => {
@@ -27,7 +27,20 @@ export default function Dashboard() {
   useEffect(() => {
     if (!token) navigate('/login')
     else fetchApps()
+    const interval = setInterval(fetchApps, 10000)
+    return () => clearInterval(interval)
   }, [token])
+
+  const timeAgo = (dateStr) => {
+    const diff = Math.floor((new Date() - new Date(dateStr)) / 1000)
+    if (diff < 60) return `${diff}s ago`
+    if (diff < 3600) return `${Math.floor(diff / 60)}m ago`
+    if (diff < 86400) return `${Math.floor(diff / 3600)}h ago`
+    return `${Math.floor(diff / 86400)}d ago`
+  }
+
+  const running = apps.filter(a => a.status === 'running').length
+  const failed = apps.filter(a => a.status === 'failed').length
 
   const createApp = async (e) => {
     e.preventDefault()
@@ -52,7 +65,7 @@ export default function Dashboard() {
       setFile(null)
       fetchApps()
     } catch (err) {
-      alert('Erreur lors de la creation')
+      alert('Error creating app')
     }
     setLoading(false)
   }
@@ -69,7 +82,7 @@ export default function Dashboard() {
         { headers: { Authorization: `Bearer ${token}` } }
       )
       const appId = res.data.app.id
-      const gitRes = await axios.post(
+      await axios.post(
         `http://localhost:3000/api/apps/${appId}/git`,
         { repoUrl: gitUrl },
         { headers: { Authorization: `Bearer ${token}` } }
@@ -77,9 +90,8 @@ export default function Dashboard() {
       setGitUrl('')
       setGitName('')
       fetchApps()
-      alert('Clone git en cours, actualise dans 2 minutes !')
     } catch (err) {
-      const msg = err.response?.data?.error || 'Erreur : verifiez que le repo est public et que l URL est correcte'
+      const msg = err.response?.data?.error || 'Error: check that the repo is public'
       setGitError(msg)
       fetchApps()
     }
@@ -93,201 +105,224 @@ export default function Dashboard() {
     fetchApps()
   }
 
+  const statusColor = (status) => {
+    if (status === 'running') return '#22c55e'
+    if (status === 'failed') return '#e53e3e'
+    if (status === 'building') return '#f59e0b'
+    return '#ccc'
+  }
+
+  const badgeStyle = (status) => {
+    const base = { fontSize: '10px', padding: '2px 8px', borderRadius: '10px' }
+    if (status === 'running') return { ...base, background: '#f0fdf4', color: '#16a34a' }
+    if (status === 'failed') return { ...base, background: '#fff5f5', color: '#e53e3e' }
+    if (status === 'building') return { ...base, background: '#fffbeb', color: '#d97706' }
+    return { ...base, background: '#f5f5f5', color: '#888' }
+  }
+
   return (
-    <div style={{ maxWidth: '900px', margin: '0 auto', padding: '2rem 1rem' }}>
-      <div style={{ marginBottom: '2rem' }}>
-        <h1 style={{ fontSize: '1.8rem', fontWeight: '700', color: '#1a1a2e' }}>Dashboard</h1>
-        <p style={{ color: '#888', marginTop: '0.3rem' }}>
-          Gerez vos applications deployees
-        </p>
-      </div>
+    <div style={{ minHeight: '100vh', background: '#f4f6f8' }}>
 
-      <div style={{
-        background: '#ffffff',
-        border: '1px solid #e2e8f0',
-        borderRadius: '16px',
-        padding: '1.5rem',
-        marginBottom: '1.5rem',
-        boxShadow: '0 1px 3px rgba(0,0,0,0.05)'
+      {/* Navbar */}
+      <nav style={{
+        background: '#fff',
+        borderBottom: '0.5px solid #e5e7eb',
+        padding: '0 24px',
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        height: '50px',
+        position: 'sticky',
+        top: 0,
+        zIndex: 100
       }}>
-        <h2 style={{ fontSize: '1rem', fontWeight: '600', marginBottom: '1rem', color: '#666' }}>
-          Deployer via ZIP
-        </h2>
-        <form onSubmit={createApp} style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
-          <input
-            type="text"
-            placeholder="Nom de l application"
-            value={name}
-            onChange={e => setName(e.target.value)}
-            style={{ flex: 1, minWidth: '200px' }}
-            required
-          />
-          <label style={{
-            background: '#f8fafc',
-            border: '1px solid #e2e8f0',
-            borderRadius: '8px',
-            padding: '0.75rem 1rem',
-            cursor: 'pointer',
-            color: file ? '#7c3aed' : '#888',
-            fontSize: '0.9rem',
-            whiteSpace: 'nowrap'
-          }}>
-            {file ? file.name : 'Choisir un ZIP'}
-            <input
-              type="file"
-              accept=".zip"
-              onChange={e => setFile(e.target.files[0])}
-              style={{ display: 'none' }}
-            />
-          </label>
-          <button type="submit" style={{
-            background: loading ? '#5b21b6' : '#7c3aed',
-            color: 'white',
-            padding: '0.75rem 1.5rem',
-            borderRadius: '8px',
-            fontWeight: '600',
-            whiteSpace: 'nowrap'
-          }}>
-            {loading ? 'Deploiement...' : 'Creer et deployer'}
-          </button>
-        </form>
-      </div>
-
-      <div style={{
-        background: '#ffffff',
-        border: '1px solid #e2e8f0',
-        borderRadius: '16px',
-        padding: '1.5rem',
-        marginBottom: '2rem',
-        boxShadow: '0 1px 3px rgba(0,0,0,0.05)'
-      }}>
-        <h2 style={{ fontSize: '1rem', fontWeight: '600', marginBottom: '1rem', color: '#666' }}>
-          Deployer depuis GitHub
-        </h2>
-        {gitError && (
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
           <div style={{
-            background: '#fff5f5',
-            border: '1px solid #fc8181',
-            color: '#e53e3e',
-            padding: '0.75rem 1rem',
-            borderRadius: '8px',
-            marginBottom: '1rem',
-            fontSize: '0.9rem'
+            width: '26px', height: '26px', background: '#7c3aed',
+            borderRadius: '6px', display: 'flex', alignItems: 'center',
+            justifyContent: 'center', color: '#fff', fontSize: '13px', fontWeight: '500'
+          }}>S</div>
+          <span style={{ fontSize: '14px', fontWeight: '500', color: '#111' }}>Sarah Platform</span>
+        </div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+          <span style={{ fontSize: '12px', color: '#888' }}>
+            {token ? JSON.parse(atob(token.split('.')[1])).email : ''}
+          </span>
+          <div style={{ width: '0.5px', height: '14px', background: '#e5e7eb' }} />
+          <button onClick={logout} style={{
+            fontSize: '12px', color: '#555', border: '0.5px solid #e5e7eb',
+            padding: '4px 12px', borderRadius: '6px', background: '#fff', cursor: 'pointer'
+          }}>Sign out</button>
+        </div>
+      </nav>
+
+      <div style={{ maxWidth: '900px', margin: '0 auto', padding: '24px 20px' }}>
+
+        {/* Stats */}
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '10px', marginBottom: '20px' }}>
+          {[
+            { label: 'Total apps', value: apps.length, color: '#111' },
+            { label: 'Running', value: running, color: '#16a34a' },
+            { label: 'Failed', value: failed, color: '#e53e3e' }
+          ].map((s, i) => (
+            <div key={i} style={{
+              background: '#fff', border: '0.5px solid #e5e7eb',
+              borderRadius: '10px', padding: '14px 16px'
+            }}>
+              <div style={{ fontSize: '11px', color: '#888', marginBottom: '4px' }}>{s.label}</div>
+              <div style={{ fontSize: '24px', fontWeight: '500', color: s.color }}>{s.value}</div>
+            </div>
+          ))}
+        </div>
+
+        {/* Deploy section */}
+        <div style={{
+          background: '#fff', border: '0.5px solid #e5e7eb',
+          borderRadius: '12px', padding: '16px', marginBottom: '20px'
+        }}>
+          <div style={{ fontSize: '12px', fontWeight: '500', color: '#555', marginBottom: '10px' }}>
+            Deploy via ZIP
+          </div>
+          <form onSubmit={createApp} style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', marginBottom: '14px' }}>
+            <input
+              type="text"
+              placeholder="App name"
+              value={name}
+              onChange={e => setName(e.target.value)}
+              style={{
+                flex: 1, minWidth: '150px', height: '34px',
+                border: '0.5px solid #e5e7eb', borderRadius: '7px',
+                padding: '0 10px', fontSize: '12px', background: '#fff'
+              }}
+              required
+            />
+            <label style={{
+              height: '34px', display: 'flex', alignItems: 'center',
+              padding: '0 12px', border: '0.5px solid #e5e7eb',
+              borderRadius: '7px', cursor: 'pointer', fontSize: '12px',
+              color: file ? '#7c3aed' : '#888', background: '#fafafa',
+              whiteSpace: 'nowrap'
+            }}>
+              {file ? file.name : 'Choose ZIP file'}
+              <input type="file" accept=".zip" onChange={e => setFile(e.target.files[0])} style={{ display: 'none' }} />
+            </label>
+            <button type="submit" style={{
+              height: '34px', background: loading ? '#5b21b6' : '#7c3aed',
+              color: '#fff', border: 'none', borderRadius: '7px',
+              padding: '0 16px', fontSize: '12px', cursor: 'pointer', whiteSpace: 'nowrap'
+            }}>
+              {loading ? 'Deploying...' : 'Deploy'}
+            </button>
+          </form>
+
+          <div style={{ fontSize: '12px', fontWeight: '500', color: '#555', marginBottom: '10px' }}>
+            Deploy from GitHub
+          </div>
+          {gitError && (
+            <div style={{
+              background: '#fff5f5', border: '0.5px solid #fca5a5',
+              borderRadius: '7px', padding: '8px 12px', marginBottom: '10px',
+              fontSize: '12px', color: '#e53e3e'
+            }}>
+              {gitError}
+            </div>
+          )}
+          <form onSubmit={deployFromGit} style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+            <input
+              type="text"
+              placeholder="App name"
+              value={gitName}
+              onChange={e => setGitName(e.target.value)}
+              style={{
+                width: '140px', height: '34px',
+                border: '0.5px solid #e5e7eb', borderRadius: '7px',
+                padding: '0 10px', fontSize: '12px', background: '#fff'
+              }}
+              required
+            />
+            <input
+              type="text"
+              placeholder="https://github.com/user/repo"
+              value={gitUrl}
+              onChange={e => setGitUrl(e.target.value)}
+              style={{
+                flex: 1, minWidth: '200px', height: '34px',
+                border: '0.5px solid #e5e7eb', borderRadius: '7px',
+                padding: '0 10px', fontSize: '12px', background: '#fff'
+              }}
+              required
+            />
+            <button type="submit" style={{
+              height: '34px', background: gitLoading ? '#333' : '#111',
+              color: '#fff', border: 'none', borderRadius: '7px',
+              padding: '0 16px', fontSize: '12px', cursor: 'pointer', whiteSpace: 'nowrap'
+            }}>
+              {gitLoading ? 'Cloning...' : 'Clone & deploy'}
+            </button>
+          </form>
+        </div>
+
+        {/* Apps list */}
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
+          <span style={{ fontSize: '13px', fontWeight: '500', color: '#111' }}>
+            My applications ({apps.length})
+          </span>
+        </div>
+
+        {apps.length === 0 && (
+          <div style={{
+            background: '#fff', border: '0.5px dashed #e5e7eb',
+            borderRadius: '12px', padding: '40px',
+            textAlign: 'center', color: '#aaa', fontSize: '13px'
           }}>
-            {gitError}
+            No applications deployed yet
           </div>
         )}
-        <form onSubmit={deployFromGit} style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
-          <input
-            type="text"
-            placeholder="Nom de l application"
-            value={gitName}
-            onChange={e => setGitName(e.target.value)}
-            style={{ flex: 1, minWidth: '150px' }}
-            required
-          />
-          <input
-            type="text"
-            placeholder="https://github.com/user/repo"
-            value={gitUrl}
-            onChange={e => setGitUrl(e.target.value)}
-            style={{ flex: 2, minWidth: '200px' }}
-            required
-          />
-          <button type="submit" style={{
-            background: gitLoading ? '#374151' : '#1a1a2e',
-            color: 'white',
-            padding: '0.75rem 1.5rem',
-            borderRadius: '8px',
-            fontWeight: '600',
-            whiteSpace: 'nowrap'
+
+        {apps.map(app => (
+          <div key={app.id} style={{
+            background: '#fff',
+            border: '0.5px solid #e5e7eb',
+            borderLeft: `3px solid ${statusColor(app.status)}`,
+            borderRadius: '0 10px 10px 0',
+            padding: '12px 16px',
+            marginBottom: '8px'
           }}>
-            {gitLoading ? 'Clonage...' : 'Cloner et deployer'}
-          </button>
-        </form>
-      </div>
-
-      <h2 style={{ fontSize: '1rem', fontWeight: '600', color: '#666', marginBottom: '1rem' }}>
-        Mes applications ({apps.length})
-      </h2>
-
-      {apps.length === 0 && (
-        <div style={{
-          textAlign: 'center',
-          padding: '3rem',
-          color: '#aaa',
-          border: '1px dashed #e2e8f0',
-          borderRadius: '16px',
-          background: '#ffffff'
-        }}>
-          Aucune application deployee
-        </div>
-      )}
-
-      {apps.map(app => (
-        <div key={app.id} style={{
-          background: '#ffffff',
-          border: '1px solid #e2e8f0',
-          borderRadius: '12px',
-          padding: '1.2rem 1.5rem',
-          marginBottom: '1rem',
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          flexWrap: 'wrap',
-          gap: '1rem',
-          boxShadow: '0 1px 3px rgba(0,0,0,0.05)'
-        }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-            <div style={{
-              width: '8px',
-              height: '8px',
-              borderRadius: '50%',
-              background: app.status === 'running' ? '#22c55e' : app.status === 'failed' ? '#ef4444' : '#ccc'
-            }} />
-            <div>
-              <strong style={{ fontSize: '1rem', color: '#1a1a2e' }}>{app.name}</strong>
-              <div style={{ fontSize: '0.8rem', color: app.status === 'failed' ? '#ef4444' : '#888', marginTop: '2px' }}>
-                {app.status === 'running' ? 'En cours execution' : app.status === 'failed' ? 'Echec du deploiement' : app.status}
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '4px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <span style={{ fontSize: '13px', fontWeight: '500', color: '#111' }}>{app.name}</span>
+                <span style={badgeStyle(app.status)}>{app.status}</span>
+              </div>
+              <div style={{ display: 'flex', gap: '5px' }}>
+                <Link to={`/app/${app.id}`} style={{
+                  fontSize: '11px', border: '0.5px solid #e5e7eb',
+                  borderRadius: '5px', padding: '3px 10px',
+                  background: '#fff', color: '#555', textDecoration: 'none'
+                }}>Details</Link>
+                <button onClick={() => deleteApp(app.id)} style={{
+                  fontSize: '11px', border: '0.5px solid #fca5a5',
+                  borderRadius: '5px', padding: '3px 10px',
+                  background: '#fff', color: '#e53e3e', cursor: 'pointer'
+                }}>Delete</button>
               </div>
             </div>
-            {app.url && (
-              <a href={app.url} target="_blank" rel="noreferrer" style={{
-                fontSize: '0.8rem',
-                color: '#7c3aed',
-                background: '#f3f0ff',
-                padding: '2px 10px',
-                borderRadius: '20px',
-                border: '1px solid #c4b5fd'
-              }}>
-                {app.url}
-              </a>
-            )}
+
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+              {app.url && (
+                <a href={app.url} target="_blank" rel="noreferrer" style={{ fontSize: '11px', color: '#7c3aed' }}>
+                  {app.url}
+                </a>
+              )}
+              {app.url && <div style={{ width: '0.5px', height: '10px', background: '#e5e7eb' }} />}
+              <span style={{ fontSize: '11px', color: '#aaa' }}>
+                {app.status === 'building' ? 'Build in progress...' :
+                 app.status === 'created' ? 'Not deployed yet' :
+                 `deployed ${timeAgo(app.created_at)}`}
+              </span>
+            </div>
           </div>
-          <div style={{ display: 'flex', gap: '0.5rem' }}>
-            <Link to={`/app/${app.id}`} style={{
-              background: '#f8fafc',
-              border: '1px solid #e2e8f0',
-              color: '#555',
-              padding: '0.4rem 1rem',
-              borderRadius: '8px',
-              fontSize: '0.85rem'
-            }}>
-              Details
-            </Link>
-            <button onClick={() => deleteApp(app.id)} style={{
-              background: '#fff5f5',
-              border: '1px solid #fc8181',
-              color: '#e53e3e',
-              padding: '0.4rem 1rem',
-              borderRadius: '8px',
-              fontSize: '0.85rem'
-            }}>
-              Supprimer
-            </button>
-          </div>
-        </div>
-      ))}
+        ))}
+      </div>
     </div>
   )
 }
