@@ -55,15 +55,17 @@ Un fichier Docker Compose prêt à l'emploi est inclus dans le projet :
 docker compose -f docker-compose.jenkins.yml up -d
 ```
 
-* **Interface Web Jenkins :** [http://localhost:8080](http://localhost:8080)
+* **Interface Web Jenkins :** [http://localhost:8088](http://localhost:8088)
 * Le socket Docker (`/var/run/docker.sock`) est automatiquement partagé avec Jenkins pour lui permettre d'exécuter des builds Docker.
 
 ---
 
 ## 📋 4. Configurer le Job dans Jenkins
 
-1. Ouvrez [http://localhost:8080](http://localhost:8080).
-2. Cliquez sur **Nouveau Item** > Donnez le nom `sarah-platform-pipeline` > Sélectionnez **Pipeline** > Cliquez sur **OK**.
+1. Ouvrez [http://localhost:8088](http://localhost:8088).
+2. Entrez le mot de passe initial administrateur généré : `36951347b97e4f97a33784600c6102e9` (ou obtenu via `docker exec sarah-jenkins cat /var/jenkins_home/secrets/initialAdminPassword`).
+3. Cliquez sur **Install suggested plugins**.
+4. Cliquez sur **Nouveau Item** > Donnez le nom `sarah-platform-pipeline` > Sélectionnez **Pipeline** > Cliquez sur **OK**.
 3. Dans la section **Pipeline** tout en bas :
    * Définition : **Pipeline script from SCM**
    * SCM : **Git**
