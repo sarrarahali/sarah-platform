@@ -1,0 +1,780 @@
+\documentclass[12pt,a4paper,oneside]{report}
+
+% --- Packages fondamentaux ---
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[french]{babel}
+\usepackage{geometry}
+\geometry{top=2.5cm, bottom=2.5cm, left=2.5cm, right=2.5cm}
+\usepackage{graphicx}
+\usepackage{xcolor}
+\usepackage{hyperref}
+\usepackage{listings}
+\usepackage{booktabs}
+\usepackage{fancyhdr}
+\usepackage{titlesec}
+\usepackage{enumitem}
+\usepackage{float}
+\usepackage{amsmath}
+\usepackage{tabularx}
+\usepackage{tcolorbox}
+
+% --- Configuration des couleurs professionnelles ---
+\definecolor{primary}{RGB}{30, 64, 175}    % Bleu soutenu ISET / Tech
+\definecolor{secondary}{RGB}{15, 118, 110} % Émeraude DevOps
+\definecolor{darkgray}{RGB}{51, 65, 85}
+\definecolor{lightgray}{RGB}{241, 245, 249}
+\definecolor{codebg}{RGB}{248, 250, 252}
+\definecolor{bordercolor}{RGB}{203, 213, 225}
+
+% --- Configuration des hyperliens ---
+\hypersetup{
+    colorlinks=true,
+    linkcolor=primary,
+    filecolor=secondary,
+    urlcolor=primary,
+    citecolor=secondary,
+    pdfauthor={InnoDeployy Team},
+    pdftitle={InnoDeployy - Plateforme SaaS DevOps},
+    pdfsubject={Projet de Fin d'Études - ISET Sousse}
+}
+
+% --- Configuration des en-têtes et pieds de page ---
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\small\textcolor{darkgray}{\leftmark}}
+\fancyhead[R]{\small\textcolor{primary}{\textbf{InnoDeployy}}}
+\fancyfoot[C]{\thepage}
+\renewcommand{\headrulewidth}{0.5pt}
+\renewcommand{\footrulewidth}{0.5pt}
+
+% Style listings (Code / Configs)
+\lstset{
+    backgroundcolor=\color{codebg},
+    basicstyle=\ttfamily\small\color{darkgray},
+    breaklines=true,
+    captionpos=b,
+    frame=single,
+    rulecolor=\color{bordercolor},
+    keywordstyle=\color{primary}\bfseries,
+    commentstyle=\color{secondary}\itshape,
+    stringstyle=\color{orange!80!black},
+    numbers=left,
+    numberstyle=\tiny\color{gray},
+    numbersep=8pt,
+    tabsize=2,
+    showstringspaces=false
+}
+
+\begin{document}
+
+% =========================================================================
+% PAGE DE TITRE / COUVERTURE ACADÉMIQUE
+% =========================================================================
+\begin{titlepage}
+    \centering
+    {\large \textbf{RÉPUBLIQUE TUNISIENNE}}\\[0.2cm]
+    {\large \textbf{MINISTÈRE DE L'ENSEIGNEMENT SUPÉRIEUR ET DE LA RECHERCHE SCIENTIFIQUE}}\\[0.2cm]
+    {\large \textbf{DIRECTION GÉNÉRALE DES ÉTUDES TECHNOLOGIQUES}}\\[0.3cm]
+    \textbf{Institut Supérieur des Études Technologiques de Sousse (ISET Sousse)}\\[0.2cm]
+    \textbf{Département Technologies de l'Informatique}\\[1.5cm]
+
+    \rule{\linewidth}{0.6mm}\\[0.4cm]
+    {\huge \bfseries \textcolor{primary}{RAPPORT DE PROJET DE FIN D'ÉTUDES}}\\[0.3cm]
+    {\Large \textbf{Pour l'obtention de la Licence en Technologies de l'Informatique}}\\[0.2cm]
+    \rule{\linewidth}{0.6mm}\\[1.5cm]
+
+    \begin{tcolorbox}[colback=lightgray,colframe=primary,arc=3mm,boxrule=1.5pt]
+        \centering\vspace{0.3cm}
+        {\LARGE \bfseries InnoDeployy}\\[0.3cm]
+        {\large \textit{Conception et réalisation d'une plateforme SaaS DevOps pour l'automatisation et l'orchestration des déploiements applicatifs}}\\[0.3cm]
+    \end{tcolorbox}
+
+    \vfill
+
+    \begin{minipage}{0.48\textwidth}
+        \textbf{Élaboré par :}\\
+        L'équipe de projet \textbf{InnoDeployy}
+    \end{minipage}
+    \hfill
+    \begin{minipage}{0.48\textwidth}
+        \begin{flushright}
+            \textbf{Sous la direction de :}\\
+            Monsieur \textbf{Adnene ROUATBI}\\
+            \textit{Enseignant Technologue - ISET Sousse}
+        \end{flushright}
+    \end{minipage}
+
+    \vfill
+    {\large Année Universitaire : 2025 -- 2026}
+\end{titlepage}
+
+% =========================================================================
+% DÉDICACE
+% =========================================================================
+\chapter*{Dédicace}
+\addcontentsline{toc}{chapter}{Dédicace}
+
+\begin{itshape}
+Je dédie ce travail avec toute mon affection et ma gratitude :
+
+\begin{itemize}[label=$\diamond$]
+    \item \textbf{À mes chers parents}, pour leur amour inconditionnel, leurs sacrifices constants et leurs encouragements sans faille tout au long de mon parcours. Merci d'avoir toujours été à mes côtés et de m'avoir insufflé la force d'atteindre mes objectifs.
+    \item \textbf{À mes deux chères sœurs et à mon frère}, pour leur affection sincère, leur présence réconfortante et leur soutien indéfectible qui comptent énormément pour moi.
+    \item \textbf{À mes chers amis et collègues}, pour les moments précieux partagés, leur solidarité, leur bonne humeur et leur soutien tout au long de cette aventure académique.
+    \item \textbf{À toutes les personnes} qui occupent une place privilégiée dans mon cœur et qui ont contribué, de près ou de loin, à la réussite de ce travail.
+\end{itemize}
+\end{itshape}
+
+\vfill
+\begin{flushright}
+    \textbf{Merci à toutes et à tous.}
+\end{flushright}
+
+\clearpage
+
+% =========================================================================
+% REMERCIEMENTS
+% =========================================================================
+\chapter*{Remerciements}
+\addcontentsline{toc}{chapter}{Remerciements}
+
+Au terme de ce projet de fin d'études, nous tenons à exprimer notre profonde et sincère gratitude à toutes les personnes qui ont contribué au succès et à l'aboutissement de ce travail.
+
+Nous adressons tout particulièrement nos remerciements les plus respectueux et chaleureux à notre encadreur académique, \textbf{Monsieur Adnene Rouatbi}, pour avoir accepté de diriger ce projet. Ses précieux conseils, ses orientations techniques avisées, sa disponibilité constante et la rigueur méthodologique qu'il nous a inculquée ont été déterminants pour mener à bien ce travail.
+
+Nous tenons également à exprimer notre reconnaissance à l'ensemble du corps professoral et administratif de l'\textbf{Institut Supérieur des Études Technologiques de Sousse (ISET Sousse)}, en particulier les enseignants du département Technologies de l'Informatique, pour la qualité de la formation dispensée et les solides compétences théoriques et pratiques acquises tout au long de notre cursus universitaire.
+
+Nos remerciements s'étendent aux membres du jury pour l'honneur qu'ils nous font en acceptant d'évaluer notre travail et de juger ce projet de fin d'études.
+
+Enfin, que toutes celles et ceux qui ont contribué, de près ou de loin, à la réalisation de ce travail trouvent ici le témoignage de notre sincère considération.
+
+\clearpage
+
+% =========================================================================
+% LISTE DES ABRÉVIATIONS (Corrigée et enrichie)
+% =========================================================================
+\chapter*{Liste des abréviations}
+\addcontentsline{toc}{chapter}{Liste des abréviations}
+
+\begin{table}[H]
+\centering
+\begin{tabularx}{\textwidth}{l X}
+\toprule
+\textbf{Sigle / Abréviation} & \textbf{Signification complète} \\
+\midrule
+\textbf{API} & Application Programming Interface \\
+\textbf{AWS} & Amazon Web Services \\
+\textbf{CI/CD} & Continuous Integration / Continuous Delivery (Intégration \& Déploiement Continus) \\
+\textbf{CPU} & Central Processing Unit \\
+\textbf{EC2} & Elastic Compute Cloud (Serveurs virtuels AWS) \\
+\textbf{ECR} & Elastic Container Registry \\
+\textbf{GHCR} & GitHub Container Registry \\
+\textbf{GitOps} & Modèle d'opération d'infrastructure basé sur Git comme source unique de vérité \\
+\textbf{HTTP / HTTPS} & HyperText Transfer Protocol / Secure \\
+\textbf{IaaS} & Infrastructure as a Service \\
+\textbf{IaC} & Infrastructure as Code \\
+\textbf{IAM} & Identity and Access Management \\
+\textbf{IP} & Internet Protocol \\
+\textbf{JWT} & JSON Web Token \\
+\textbf{ORM} & Object-Relational Mapping (Prisma) \\
+\textbf{PaaS} & Platform as a Service \\
+\textbf{PFE} & Projet de Fin d'Études \\
+\textbf{PO} & Product Owner \\
+\textbf{RAM} & Random Access Memory \\
+\textbf{RBAC} & Role-Based Access Control \\
+\textbf{SaaS} & Software as a Service \\
+\textbf{SPOF} & Single Point of Failure (Point unique de défaillance) \\
+\textbf{SRE} & Site Reliability Engineering \\
+\textbf{VPC} & Virtual Private Cloud \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\clearpage
+
+% =========================================================================
+% TABLES DES MATIÈRES & LISTE DES FIGURES
+% =========================================================================
+\tableofcontents
+\clearpage
+\listoffigures
+\clearpage
+\listoftables
+\clearpage
+
+% =========================================================================
+% INTRODUCTION GÉNÉRALE
+% =========================================================================
+\chapter*{Introduction générale}
+\addcontentsline{toc}{chapter}{Introduction générale}
+
+L'évolution rapide des technologies du cloud et du développement logiciel a révolutionné la manière dont les entreprises conçoivent, livrent et maintiennent leurs applications web. Dans un marché compétitif exigeant une mise en production rapide (\textit{Time-to-Market}), les équipes d'ingénierie logicielle adoptent massivement la culture \textbf{DevOps}, qui vise à supprimer les cloisonnements historiques entre les équipes de développement (\textit{Dev}) et les équipes d'exploitation opérationnelle (\textit{Ops}).
+
+L'automatisation du cycle de vie des applications constitue le pilier fondamental de cette approche, notamment à travers les pratiques d'\textbf{Intégration Continue et Déploiement Continu (CI/CD)}. Ces méthodes permettent de compiler, tester, conteneuriser et déployer automatiquement les modifications logicielles, réduisant ainsi les interventions manuelles, les temps d'arrêt et les erreurs humaines.
+
+Cependant, la mise en œuvre pratique d'une chaîne DevOps complète moderne soulève d'importantes difficultés :
+\begin{itemize}[label=$\bullet$]
+    \item \textbf{Fragmentation des outils (\textit{Toolchain fatigue})} : Pour mettre en production un simple service, une équipe doit souvent configurer manuellement un serveur CI (Jenkins), gérer des dépôts de code (GitHub), créer des images de conteneurs (Docker), les publier sur un registre privé (GHCR), synchroniser des configurations déclaratives (GitOps avec Argo CD), orchestrer un cluster de calcul (Kubernetes) et configurer une infrastructure cloud (AWS).
+    \item \textbf{Complexité d'accès pour les développeurs} : Les développeurs web ne possèdent pas tous une expertise approfondie en administration de clusters Kubernetes ni en écriture de pipelines complexes.
+    \item \textbf{Manque de traçabilité et de centralisation} : Suivre l'historique des builds, connaître l'URL publique de test, auditer les échecs et surveiller la santé des conteneurs nécessite de naviguer entre plusieurs interfaces hétérogènes.
+\end{itemize}
+
+C'est dans cette perspective que s'inscrit notre projet de fin d'études, réalisé au sein de l'\textbf{Institut Supérieur des Études Technologiques de Sousse (ISET Sousse)}, sous le titre \textbf{InnoDeployy}. 
+
+InnoDeployy est une plateforme SaaS (\textit{Software as a Service}) DevOps moderne, conçue pour simplifier, automatiser et centraliser l'intégralité du cycle de déploiement des applications web à partir d'une interface unique et intuitive.
+
+\section*{Problématique}
+La question centrale à laquelle ce projet répond peut être formulée ainsi :
+\begin{center}
+\begin{tcolorbox}[colback=lightgray,colframe=primary,arc=2mm]
+\centering\itshape
+« Comment concevoir et développer une plateforme unifiée et sécurisée permettant aux développeurs d'automatiser le cycle complet de build, de conteneurisation et de déploiement GitOps de leurs applications web sur Kubernetes, tout en garantissant un suivi centralisé et une observabilité proactive ? »
+\end{tcolorbox}
+\end{center}
+
+\section*{Solution apportée}
+Pour répondre à cette problématique, \textbf{InnoDeployy} propose une architecture modulaire et robuste :
+\begin{enumerate}
+    \item \textbf{Interface utilisateur ergonomique} développée avec \textbf{React et Vite}, offrant un tableau de bord analytique, la gestion des projets et le suivi en temps réel des builds.
+    \item \textbf{Backend résilient} articulé autour de \textbf{NestJS}, communiquant via l'ORM \textbf{Prisma} avec une base relationnelle \textbf{PostgreSQL}.
+    \item \textbf{Moteur d'intégration continue} propulsé par \textbf{Jenkins}, chargé d'analyser le code, d'injecter un Dockerfile adapté au besoin, de fabriquer l'image conteneurisée et de la publier sur \textbf{GHCR}.
+    \item \textbf{Orchestration GitOps moderne} assurée par un couplage entre un dépôt Git d'infrastructure, \textbf{Argo CD} et \textbf{Kubernetes} (testé en local avec \textbf{Kind} et validé en production Cloud sur \textbf{AWS EC2 avec K3s et Traefik}).
+    \item \textbf{Système de surveillance et d'alerting} piloté par \textbf{Prometheus} et \textbf{Alertmanager}, prévenant par courrier électronique dès qu'un dysfonctionnement survient.
+\end{enumerate}
+
+\section*{Organisation du rapport}
+Le présent rapport est structuré en sept chapitres complémentaires :
+\begin{itemize}[label=--]
+    \item \textbf{Chapitre 1 : Cadre général du projet} pose le contexte académique, l'organisme d'accueil, l'analyse de l'existant et la méthodologie de gestion de projet.
+    \item \textbf{Chapitre 2 : Étude préalable et environnement technologique} détaille l'état de l'art DevOps, la conteneurisation, le paradigme GitOps et l'infrastructure Cloud.
+    \item \textbf{Chapitre 3 : Analyse et spécification des besoins} explicite les besoins fonctionnels et non fonctionnels, les cas d'utilisation et le Product Backlog structuré.
+    \item \textbf{Chapitre 4 : Conception et architecture de la solution} présente les vues d'architecture globale, le pipeline CI/CD/GitOps et le schéma conceptuel des données.
+    \item \textbf{Chapitre 5 : Développement et réalisation de la plateforme InnoDeployy} expose la mise en œuvre du frontend React, du backend NestJS et de la sécurité.
+    \item \textbf{Chapitre 6 : Mise en place du processus CI/CD et GitOps} décrit la configuration du pipeline Jenkins, la synchronisation déclarative avec Argo CD et la supervision.
+    \item \textbf{Chapitre 7 : Déploiement cloud et validation} présente la mise en production sur Amazon Web Services (AWS EC2 / K3s), les tests de validation, les résultats et les perspectives d'amélioration.
+\end{itemize}
+
+\clearpage
+
+% =========================================================================
+% CHAPITRE 1 : CADRE GÉNÉRAL DU PROJET
+% =========================================================================
+\chapter{Cadre général du projet}
+
+\section{Introduction}
+Ce premier chapitre a pour objectif de fixer le cadre institutionnel et méthodologique du projet de fin d'études. Après une brève présentation de l'établissement d'accueil, nous détaillons le contexte industriel du projet, l'étude de l'existant avec une analyse comparative rigoureuse, ainsi que les objectifs stratégiques poursuivis. Enfin, nous introduisons la démarche de gestion de projet retenue.
+
+\section{Présentation de l'établissement}
+\subsection{L'Institut Supérieur des Études Technologiques de Sousse}
+L'Institut Supérieur des Études Technologiques de Sousse (\textbf{ISET Sousse}) est une institution universitaire de référence sous la tutelle de la Direction Générale des Études Technologiques (DGET). Sa mission première est de former des cadres techniques et des ingénieurs hautement qualifiés, dotés de compétences théoriques pointues et d'une maîtrise pratique des technologies industrielles contemporaines.
+
+Le département Technologies de l'Informatique dispense des formations axées sur le génie logiciel, les systèmes de réseaux, le cloud computing et l'administration des infrastructures modernes. C'est au confluent de ces disciplines que se positionne le projet \textbf{InnoDeployy}.
+
+\section{Contexte et opportunité du projet}
+La transition vers les microservices et les conteneurs logiciels a profondément modifié les normes de livraison logicielle. Auparavant, le déploiement applicatif impliquait des procédures manuelles (connexions SSH, transfert de binaires par FTP/SCP, modifications de variables d'environnement sur des serveurs physiques ou des machines virtuelles). 
+
+Ces approches présentent des vulnérabilités critiques :
+\begin{itemize}[label=$\bullet$]
+    \item Dérive de configuration (\textit{Configuration Drift}) : les environnements de staging et de production divergent progressivement.
+    \item Temps moyen de réparation (\textit{MTTR}) élevé en cas d'incident : impossibilité de revenir rapidement à un état stable antérieur.
+    \item Erreurs d'inattention et interruptions de service non planifiées.
+\end{itemize}
+
+Pour y remédier, l'automatisation via des pipelines CI/CD est devenue la norme industrielle. Toutefois, orchestrer ces outils exige une forte expertise. \textbf{InnoDeployy} naît de la volonté d'offrir une solution « clé en main » qui abstrait cette complexité technique pour les développeurs.
+
+\section{Objectifs du projet}
+L'objectif fondamental d'InnoDeployy est de fournir une plateforme SaaS unifiée et intuitive, permettant de :
+\begin{enumerate}
+    \item \textbf{Centraliser l'administration} : Fournir une console web pour configurer des projets, déclencher des builds et visualiser l'état de chaque environnement.
+    \item \textbf{Assurer l'intégration transparente avec GitHub} : Récupérer automatiquement le code source depuis les dépôts distants.
+    \item \textbf{Automatiser la conteneurisation} : Construire des images conteneurisées optimisées et les stocker dans le registre sécurisé GitHub Container Registry (GHCR).
+    \item \textbf{Implémenter une approche GitOps stricte} : Séparer le code applicatif du code déclaratif de déploiement, et automatiser la réconciliation avec Argo CD.
+    \item \textbf{Garantir la visibilité opérationnelle} : Intégrer un système de métriques et d'alerting en temps réel capable de notifier les équipes par email en cas d'anomalie.
+    \item \textbf{Valider la solution en conditions réelles} : Tester la résilience en local sur Kind et dans le cloud public Amazon Web Services (AWS).
+\end{enumerate}
+
+\section{Étude de l'existant et positionnement}
+Pour mesurer la pertinence d'InnoDeployy, une étude comparative a été menée face aux solutions existantes sur le marché :
+
+\begin{table}[H]
+\centering
+\small
+\begin{tabularx}{\textwidth}{l X X X}
+\toprule
+\textbf{Critère} & \textbf{Approche Manuelle} & \textbf{PaaS Propriétaire (Vercel/Heroku)} & \textbf{InnoDeployy (Notre Solution)} \\
+\midrule
+\textbf{Automatisation} & Nulle (interventions manuelles) & Totale & \textbf{Totale (Pipeline CI/CD + GitOps)} \\
+\textbf{Contrôle infrastructure} & Élevé mais fragile & Faible (effet boîte noire, vendor lock-in) & \textbf{Total (Kubernetes standard, K3s/Kind)} \\
+\textbf{Maîtrise des coûts} & Imprévisible & Élevée avec l'échelle (prix au compute) & \textbf{Optimale (Hébergeable sur infra propre)} \\
+\textbf{Approche GitOps} & Absente & Partielle ou propriétaire & \textbf{Native avec Argo CD et Git dédié} \\
+\textbf{Observabilité} & Logs serveurs manuels & Métriques intégrées payantes & \textbf{Prometheus \& Alertmanager intégrés} \\
+\bottomrule
+\end{tabularx}
+\caption{Tableau comparatif des approches de déploiement}
+\end{table}
+
+\section{Méthodologie de travail}
+Pour assurer la flexibilité, la réactivité et la validation incrémentale des livrables, nous avons opté pour le framework \textbf{Agile Scrum}. Le projet a été découpé en itérations successives (\textit{Sprints}), chacune délivrant une fonctionnalité technique testable : de la conception du portail à la validation sur AWS.
+
+\section{Conclusion}
+Ce chapitre a posé les fondations du projet en clarifiant les enjeux techniques et stratégiques d'InnoDeployy. Le chapitre suivant présente l'étude technique approfondie et les concepts clés du domaine DevOps mis en œuvre.
+
+\clearpage
+
+% =========================================================================
+% CHAPITRE 2 : ÉTUDE PRÉALABLE ET ENVIRONNEMENT TECHNOLOGIQUE
+% =========================================================================
+\chapter{Étude préalable et environnement technologique}
+
+\section{Introduction}
+L'architecture d'InnoDeployy repose sur la synergie de technologies leaders de l'écosystème Cloud Native. Ce chapitre détaille les concepts fondamentaux qui sous-tendent notre démarche : l'approche DevOps, l'automatisation CI/CD, la conteneurisation Docker, l'orchestration Kubernetes, le paradigme GitOps avec Argo CD, l'observabilité et l'environnement cloud AWS.
+
+\section{L'approche DevOps et la culture d'automatisation}
+Le mouvement DevOps ne se réduit pas à une suite d'outils ; il incarne une synergie méthodologique visant à réduire le cycle de vie du développement logiciel tout en garantissant des livraisons fréquentes et de haute qualité. Les piliers du DevOps reposent sur le partage des responsabilités, la mesure en continu et surtout l'automatisation intégrale des tâches récurrentes.
+
+\section{Intégration et Déploiement Continus (CI/CD)}
+\subsection{Intégration Continue (CI)}
+L'intégration continue est la pratique consistant à valider et fusionner fréquemment le travail de chaque contributeur dans une branche partagée. Dès qu'un commit est détecté, un agent automatisé exécute les tests unitaires et vérifie la conformité du code, détectant les régressions au plus tôt.
+
+\subsection{Déploiement Continu (CD)}
+Le déploiement continu prolonge l'intégration en automatisant la publication du livrable dans les environnements de recette ou de production, sans intervention humaine directe, sous réserve de la validation des tests qualité.
+
+\subsection{L'orchestrateur Jenkins}
+Jenkins est un serveur d'automatisation open-source robuste. Dans InnoDeployy, Jenkins joue le rôle de chef d'orchestre du pipeline d'intégration : déclenché via des API REST depuis le backend NestJS, il gère la récupération du dépôt GitHub client, exécute la construction de l'image Docker, pousse l'artefact sur GHCR et met à jour le dépôt GitOps avec le nouveau hash de version.
+
+\section{Gestion du code source avec Git et GitHub}
+La plateforme applique une politique stricte de séparation des préoccupations (\textit{Separation of Concerns}) au moyen de deux dépôts distincts :
+\begin{itemize}[label=$\bullet$]
+    \item \textbf{Dépôt Applicatif} : Héberge le code source de l'utilisateur (frontend, backend, scripts).
+    \item \textbf{Dépôt GitOps} : Héberge exclusivement les manifestes déclaratifs Kubernetes (\texttt{deployment.yaml}, \texttt{service.yaml}, \texttt{ingress.yaml}) décrivant l'infrastructure souhaitée.
+\end{itemize}
+
+\section{Conteneurisation logicielle avec Docker}
+Docker encapsule une application et l'ensemble de ses dépendances (binaires, bibliothèques, configurations système) au sein d'une unité légère et portable appelée conteneur. Contrairement aux machines virtuelles traditionnelles, les conteneurs partagent le noyau de l'OS hôte, garantissant une empreinte mémoire réduite et un démarrage en quelques millisecondes. 
+
+Les images générées sont stockées sur \textbf{GitHub Container Registry (GHCR)}, qui offre un registre hautement performant, sécurisé et nativement intégré à l'écosystème GitHub.
+
+\section{Orchestration avec Kubernetes}
+Lorsque le nombre de conteneurs croît, leur gestion manuelle devient impossible. Kubernetes (K8s) est le standard industriel d'orchestration permettant :
+\begin{itemize}[label=$\bullet$]
+    \item \textbf{L'auto-réparation (\textit{Self-Healing})} : Redémarrage automatique des conteneurs en cas d'échec ou d'indisponibilité du nœud.
+    \item \textbf{La gestion du trafic} : Répartition de charge native via les \textit{Services} (ClusterIP).
+    \item \textbf{L'exposition externe} : Routage des requêtes HTTP/HTTPS entrantes vers les services internes grâce aux contrôleurs \textit{Ingress}.
+\end{itemize}
+
+Dans ce projet, nous utilisons deux variantes certifiées de Kubernetes :
+\begin{itemize}
+    \item \textbf{Kind (Kubernetes in Docker)} pour les phases de prototypage et de test local.
+    \item \textbf{K3s}, distribution ultra-légère optimisée pour la production légère, déployée sur notre instance AWS EC2.
+\end{itemize}
+
+\section{Le paradigme GitOps et Argo CD}
+GitOps est une pratique opérationnelle qui utilise Git comme source unique de vérité pour les infrastructures et les applications déclaratives. 
+
+\begin{figure}[H]
+    \centering
+    \begin{tcolorbox}[colback=white,colframe=primary,arc=2mm,width=0.9\textwidth]
+    \centering
+    \textbf{Flux GitOps InnoDeployy} \\[0.2cm]
+    \small \texttt{Dépôt GitOps (YAML)} $\xrightarrow{\text{Surveillance continue}}$ \textbf{Argo CD} $\xrightarrow{\text{Réconciliation (Sync)}}$ \textbf{Cluster Kubernetes}
+    \end{tcolorbox}
+    \caption{Principe de réconciliation GitOps avec Argo CD}
+\end{figure}
+
+Les trois piliers de GitOps mis en œuvre sont :
+\begin{enumerate}
+    \item \textbf{État déclaratif} : La configuration désirée du cluster est explicitement décrite en YAML.
+    \item \textbf{Contrôle de version immuable} : Chaque modification est tracée par un commit Git, facilitant l'audit et le rollback immédiat via un simple \texttt{git revert}.
+    \item \textbf{Réconciliation continue} : Argo CD compare périodiquement l'état réel du cluster avec l'état déclaré dans Git. En cas de dérive (\textit{OutOfSync}), il applique les corrections nécessaires pour restaurer l'état désiré (\textit{Synced \& Healthy}).
+\end{enumerate}
+
+\section{Supervision et gestion des alertes}
+Une infrastructure sans observabilité est aveugle. Nous avons couplé :
+\begin{itemize}[label=$\bullet$]
+    \item \textbf{Prometheus} : Base de données orientée séries temporelles qui scrape périodiquement les métriques de performance (utilisation mémoire, CPU, disponibilité des pods).
+    \item \textbf{Alertmanager} : Moteur de notification qui évalue les règles de criticité et expédie immédiatement des alertes par courrier électronique lorsqu'un seuil est franchi (ex : arrêt inattendu d'un service).
+\end{itemize}
+
+\section{Conclusion}
+L'ensemble de ces technologies forme un écosystème cohérent, standardisé et hautement évolutif. Le chapitre suivant formalise les besoins fonctionnels et non fonctionnels du projet.
+
+\clearpage
+
+% =========================================================================
+% CHAPITRE 3 : ANALYSE ET SPÉCIFICATION DES BESOINS
+% =========================================================================
+\chapter{Analyse et spécification des besoins}
+
+\section{Introduction}
+La réussite d'un projet logiciel repose sur une formalisation rigoureuse des attentes des utilisateurs et des exigences techniques. Ce chapitre identifie les acteurs du système, détaille les besoins fonctionnels et non fonctionnels, et expose le Product Backlog restructuré selon les standards de l'ingénierie logicielle.
+
+\section{Méthodologie Scrum et Acteurs du Système}
+\subsection{Rôles et Personas}
+Afin de corriger tout biais de formulation, les besoins sont exprimés selon des acteurs métiers réels :
+\begin{itemize}[label=$\bullet$]
+    \item \textbf{Développeur Web (Utilisateur principal)} : Ingénieur ou développeur souhaitant déployer son code sans devoir gérer des manifestes Kubernetes manuels ni configurer des serveurs de build.
+    \item \textbf{Administrateur Plateforme / DevOps} : Responsable de la gouvernance, de la disponibilité des clusters, de la sécurité des registres et de la supervision globale.
+    \item \textbf{Systèmes Externes} : GitHub (fournisseur de code), GHCR (registre d'images), Jenkins (moteur CI), Argo CD (opérateur GitOps) et Kubernetes (runtime d'exécution).
+\end{itemize}
+
+\section{Spécification des besoins fonctionnels}
+Les fonctionnalités du système s'articulent autour de six modules clés :
+\begin{enumerate}
+    \item \textbf{Gestion des comptes et sécurité} : Inscription, authentification sécurisée via JWT et hachage bcrypt des mots de passe.
+    \item \textbf{Gestion des projets applicatifs} : Création de projets, liaison avec des dépôts GitHub publics ou privés, choix des branches sources.
+    \item \textbf{Orchestration des déploiements} : Déclenchement automatique des builds, injection dynamique de Dockerfiles et notification de progression.
+    \item \textbf{Gestion GitOps déclarative} : Écriture automatisée des manifestes dans le dépôt GitOps et synchronisation via Argo CD.
+    \item \textbf{Tableau de bord et traçabilité} : Consultation des statistiques globales, historique détaillé des déploiements et logs d'erreurs en cas d'échec.
+    \item \textbf{Accès et routage dynamique} : Attribution automatique d'une URL publique pour chaque application déployée avec succès.
+\end{enumerate}
+
+\section{Spécification des besoins non fonctionnels}
+\begin{itemize}[label=$\bullet$]
+    \item \textbf{Sécurité} : Chiffrement des mots de passe, protection des routes d'API par des guards d'authentification, gestion hermétique des secrets de registre.
+    \item \textbf{Disponibilité et résilience} : Capacité des applications déployées à redémarrer automatiquement en cas de crash via les politiques de redémarrage Kubernetes.
+    \item \textbf{Performance} : Temps de réponse de l'API inférieur à 200 ms pour les opérations courantes ; parallélisation des étapes non bloquantes du pipeline.
+    \item \textbf{Maintenabilité et modularité} : Architecture logicielle découplée (frontend React séparé du backend NestJS modulaire) et utilisation d'un ORM typé (Prisma).
+\end{itemize}
+
+\section{Product Backlog Global Corrigé}
+Le tableau ci-dessous présente le Backlog révisé, formulé rigoureusement selon les conventions Scrum professionnelles (\textit{En tant que [Acteur métier], je veux [Fonctionnalité] afin de [Bénéfice attendu]}).
+
+\begin{table}[H]
+\centering
+\scriptsize
+\begin{tabularx}{\textwidth}{l p{2.8cm} X X c}
+\toprule
+\textbf{ID} & \textbf{En tant que} & \textbf{Je veux} & \textbf{Afin de} & \textbf{Priorité} \\
+\midrule
+\textbf{US01} & Développeur Web & Créer un compte et m'authentifier en toute sécurité & Accéder à mon espace de déploiement personnel & Haute \\
+\textbf{US02} & Développeur Web & Créer et paramétrer un nouveau projet & Structurer mes futures livraisons logicielles & Haute \\
+\textbf{US03} & Développeur Web & Connecter un dépôt GitHub et choisir la branche & Récupérer le code source cible pour le build & Haute \\
+\textbf{US04} & Développeur Web & Déclencher le déploiement d'une application en 1 clic & Livrer mon code sans configuration manuelle & Haute \\
+\textbf{US05} & Développeur Web & Suivre l'état d'avancement du déploiement en direct & Connaître immédiatement le résultat de la mise en ligne & Haute \\
+\textbf{US06} & Développeur Web & Accéder directement à l'URL publique de mon application & Vérifier son bon fonctionnement sur Internet & Haute \\
+\textbf{US07} & Développeur Web & Consulter l'historique de tous mes déploiements & Suivre l'évolution et auditer les versions précédentes & Moyenne \\
+\textbf{US08} & Développeur Web & Visualiser les statistiques globales de mes services & Disposer d'une vue synthétique sur mon activité & Moyenne \\
+\midrule
+\textbf{US09} & Admin Plateforme & Automatiser l'analyse du projet et la génération du Dockerfile & Supporter divers frameworks sans intervention & Haute \\
+\textbf{US10} & Admin Plateforme & Orchestrer le pipeline de compilation et de push d'image & Produire des artefacts immuables sur GHCR & Haute \\
+\textbf{US11} & Admin Plateforme & Versionner les manifestes Kubernetes dans un dépôt GitOps & Assurer une traçabilité totale des configurations & Haute \\
+\textbf{US12} & Admin Plateforme & Configurer la synchronisation automatique via Argo CD & Garantir la conformité de l'état du cluster & Haute \\
+\textbf{US13} & Admin Plateforme & Déployer et valider les services sur un cluster K3s & Optimiser l'utilisation des ressources cloud & Haute \\
+\textbf{US14} & Admin Plateforme & Configurer un contrôleur Ingress et un routage wildcard & Offrir des endpoints accessibles publiquement & Haute \\
+\textbf{US15} & Ingénieur SRE & Collecter les métriques système via Prometheus & Détecter les goulets d'étranglement de la plateforme & Moyenne \\
+\textbf{US16} & Ingénieur SRE & Configurer des alertes automatisées avec Alertmanager & Être prévenu par email en cas d'indisponibilité & Moyenne \\
+\bottomrule
+\end{tabularx}
+\caption{Product Backlog global restructuré de la plateforme InnoDeployy}
+\end{table}
+
+\section{Conclusion}
+Cette formalisation clarifie les frontières fonctionnelles du produit. Le chapitre suivant présente la conception architecturale et la modélisation technique de la solution.
+
+\clearpage
+
+% =========================================================================
+% CHAPITRE 4 : CONCEPTION ET ARCHITECTURE DE LA SOLUTION
+% =========================================================================
+\chapter{Conception et architecture de la solution}
+
+\section{Introduction}
+Une conception soignée garantit l'extensibilité, la robustesse et la pérennité d'un système distribué. Ce chapitre détaille l'architecture globale d'InnoDeployy, le diagramme des flux de déploiement CI/CD/GitOps, ainsi que la modélisation de la base de données.
+
+\section{Architecture globale du système}
+InnoDeployy repose sur une architecture moderne à services distribués découpée en cinq niveaux fonctionnels :
+\begin{enumerate}
+    \item \textbf{Couche Présentation (Frontend)} : SPA développée sous React 18, packagée par Vite pour une réactivité maximale.
+    \item \textbf{Couche Traitement \& Orchestration (Backend)} : API REST modulaire développée sous NestJS (TypeScript), assurant la logique métier, la gestion des sessions et les appels de contrôle vers Jenkins.
+    \item \textbf{Couche Persistance} : Base relationnelle PostgreSQL administrée via l'ORM Prisma.
+    \item \textbf{Couche Intégration Continue (CI)} : Pipeline Jenkins gérant les phases d'inspection, de compilation conteneurisée et de push vers GHCR.
+    \item \textbf{Couche Déploiement Continu \& Runtime (GitOps / K8s)} : Cluster Kubernetes (Kind en local, K3s sur AWS EC2) synchronisé en continu par Argo CD à partir du dépôt GitOps.
+\end{enumerate}
+
+\section{Architecture détaillée du flux CI/CD et GitOps}
+Le cycle de vie complet d'un déploiement déclenché depuis InnoDeployy suit une chaîne d'étapes rigoureusement orchestrée :
+
+\begin{enumerate}
+    \item \textbf{Déclenchement} : L'utilisateur sélectionne son projet et clique sur \textit{Déployer}. Le frontend envoie une requête \texttt{POST /deployments} au backend.
+    \item \textbf{Enregistrement} : Le backend enregistre l'opération en base avec l'état \texttt{PENDING}.
+    \item \textbf{Appel Jenkins} : Le service \texttt{JenkinsService} sollicite l'API REST de Jenkins avec les paramètres du build (dépôt, branche, nom de l'application).
+    \item \textbf{Pipeline CI} :
+    \begin{itemize}
+        \item Clone du code source applicatif depuis GitHub.
+        \item Détection ou génération automatique du \texttt{Dockerfile}.
+        \item Construction de l'image Docker étiquetée avec l'identifiant du build.
+        \item Publication authentifiée sur GitHub Container Registry (GHCR).
+    \end{itemize}
+    \item \textbf{Publication GitOps} : Jenkins clone le dépôt GitOps dédié, met à jour le tag de l'image dans le manifeste \texttt{deployment.yaml}, et pousse le commit.
+    \item \textbf{Synchronisation Argo CD} : L'opérateur Argo CD détecte la nouvelle révision Git et applique les modifications sur le cluster Kubernetes.
+    \item \textbf{Validation et Routage} : Le contrôleur Ingress (Traefik ou NGINX) route le trafic vers les nouveaux pods. Le statut passe à \texttt{SUCCESS} et l'URL publique est rendue disponible sur le tableau de bord.
+\end{enumerate}
+
+\section{Conception de la base de données}
+\subsection{Modèle Relationnel}
+Le schéma relationnel est articulé autour de trois entités fondamentales :
+\begin{itemize}[label=$\bullet$]
+    \item \textbf{User} : Représente l'utilisateur de la plateforme (\texttt{id}, \texttt{email}, \texttt{passwordHash}, \texttt{role}, \texttt{createdAt}).
+    \item \textbf{Project} : Représente une application à gérer (\texttt{id}, \texttt{name}, \texttt{description}, \texttt{repoUrl}, \texttt{branch}, \texttt{userId}).
+    \item \textbf{Deployment} : Historise chaque tentative de mise en production (\texttt{id}, \texttt{status}, \texttt{jenkinsBuildNumber}, \texttt{url}, \texttt{failureReason}, \texttt{projectId}, \texttt{createdAt}).
+\end{itemize}
+
+\subsection{Schéma de définition Prisma}
+Le modèle est formalisé de façon déclarative dans le fichier \texttt{schema.prisma} :
+
+\begin{lstlisting}[language=SQL, caption=Extrait du schéma Prisma d'InnoDeployy]
+enum DeploymentStatus {
+  PENDING
+  RUNNING
+  SUCCESS
+  FAILED
+}
+
+model User {
+  id           String    @id @default(uuid())
+  email        String    @unique
+  name         String
+  passwordHash String
+  role         String    @default("USER")
+  projects     Project[]
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+}
+
+model Project {
+  id          String       @id @default(uuid())
+  name        String
+  description String?
+  repoUrl     String
+  branch      String       @default("main")
+  userId      String
+  user        User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  deployments Deployment[]
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+}
+
+model Deployment {
+  id                 String           @id @default(uuid())
+  status             DeploymentStatus @default(PENDING)
+  jenkinsBuildNumber Int?
+  url                String?
+  failureReason      String?
+  projectId          String
+  project            Project          @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  createdAt          DateTime         @default(now())
+  updatedAt          DateTime         @updatedAt
+}
+\end{lstlisting}
+
+\section{Conclusion}
+L'architecture proposée garantit un découplage strict entre la gestion utilisateur, la chaîne d'intégration et l'environnement d'exécution Kubernetes. Le chapitre suivant présente les aspects concrets de l'implémentation logicielle.
+
+\clearpage
+
+% =========================================================================
+% CHAPITRE 5 : DÉVELOPPEMENT ET RÉALISATION DE LA PLATEFORME
+% =========================================================================
+\chapter{Développement et réalisation de la plateforme InnoDeployy}
+
+\section{Introduction}
+Ce chapitre détaille la réalisation technique des composants logiciels d'InnoDeployy. Nous décrivons l'environnement de développement, la structure modulaire du backend NestJS, l'interface utilisateur développée en React, ainsi que les mécanismes de sécurité mis en place.
+
+\section{Environnement de développement}
+Le développement a été réalisé sur des stations de travail Ubuntu 22.04 LTS et Windows WSL2, équipées de Node.js v20+, TypeScript 5+, Docker Engine, PostgreSQL 15 et Git.
+
+\section{Développement du Backend (NestJS)}
+\subsection{Modularité et organisation}
+Le backend a été conçu selon les bonnes pratiques de NestJS, qui s'appuient sur l'injection de dépendances et la programmation modulaire :
+\begin{itemize}[label=$\bullet$]
+    \item \textbf{AuthModule} : Authentification JWT, inscription, chiffrement des mots de passe.
+    \item \textbf{UsersModule} : Consultation et gestion du profil utilisateur.
+    \item \textbf{ProjectsModule} : Opérations CRUD sur les projets applicatifs.
+    \item \textbf{DeploymentsModule} : Suivi du statut des déploiements et liaison avec Jenkins.
+    \item \textbf{JenkinsService} : Service dédié encapsulant les requêtes HTTP vers l'API Jenkins (déclenchement paramétré, interrogation du statut du build et extraction des logs).
+\end{itemize}
+
+\subsection{Sécurité et contrôle des accès}
+La sécurité de l'API repose sur :
+\begin{itemize}[label=$\bullet$]
+    \item \textbf{Bcrypt} : Hachage salé des mots de passe avec un coût de calcul (\textit{salt rounds}) garantissant une protection contre les attaques par dictionnaire.
+    \item \textbf{JWT (JSON Web Token)} : Les requêtes vers les routes protégées doivent comporter un en-tête d'autorisation \texttt{Bearer <token>}, validé par un \texttt{JwtAuthGuard}.
+    \item \textbf{Vérification d'appartenance} : Chaque action sur un projet ou un déploiement vérifie formellement que l'entité appartient à l'utilisateur actuellement authentifié.
+\end{itemize}
+
+\section{Développement de l'interface utilisateur (React)}
+L'interface a été conçue pour être fluide, sobre et orientée expérience utilisateur (UX) :
+\begin{itemize}[label=$\bullet$]
+    \item \textbf{Tableau de bord (Dashboard)} : Présente des indicateurs synthétiques clés (nombre de projets, total des déploiements, taux de succès et d'échecs).
+    \item \textbf{Gestionnaire de projets} : Formulaire guidé pour connecter un dépôt GitHub et configurer les paramètres de branche.
+    \item \textbf{Centre de déploiement} : Bouton d'action immédiate avec retour d'état interactif (\textit{badges de statut colorés} : bleu pour \texttt{RUNNING}, vert pour \texttt{SUCCESS}, rouge pour \texttt{FAILED}).
+\end{itemize}
+
+\section{Conclusion}
+Le développement conjoint du frontend et du backend fournit une base applicative moderne et réactive. Le chapitre suivant présente le cœur opérationnel du projet : la chaîne CI/CD et GitOps.
+
+\clearpage
+
+% =========================================================================
+% CHAPITRE 6 : MISE EN PLACE DU PROCESSUS CI/CD ET GITOPS
+% =========================================================================
+\chapter{Mise en place du processus CI/CD et GitOps}
+
+\section{Introduction}
+L'automatisation du cycle de livraison constitue le cœur de la promesse de valeur d'InnoDeployy. Ce chapitre présente la configuration du pipeline d'intégration continue sous Jenkins, le modèle de publication sur GHCR, l'implémentation de la réconciliation GitOps avec Argo CD, ainsi que le système d'observabilité.
+
+\section{Configuration du pipeline d'intégration Jenkins}
+Le pipeline est défini de manière déclarative au sein d'un \texttt{Jenkinsfile}. Il structure l'exécution selon les étapes suivantes :
+\begin{enumerate}
+    \item \textbf{Checkout} : Téléchargement du code source depuis GitHub.
+    \item \textbf{Préparation & Détection} : Détection automatique de la nature du projet (Node.js, site statique HTML/Nginx, Python) et génération d'un Dockerfile adapté si le dépôt n'en fournit pas.
+    \item \textbf{Build Docker} : Compilation de l'image conteneurisée.
+    \item \textbf{Publication GHCR} : Authentification via Personal Access Token (PAT) et publication de l'image avec un double tag : le numéro de build unique (\texttt{ghcr.io/...:build-28}) et \texttt{latest}.
+    \item \textbf{Commit GitOps} : Mise à jour automatique du fichier \texttt{deployment.yaml} dans le dépôt GitOps pour y inscrire le nouveau tag d'image.
+\end{enumerate}
+
+\section{Mise en œuvre de GitOps avec Argo CD}
+Dans un modèle CI classique dit \textit{Push-based}, le serveur CI dispose d'un accès administrateur au cluster pour exécuter des commandes \texttt{kubectl apply}. Cette méthode comporte un risque de sécurité majeur : la compromission du serveur CI entraîne la compromission de tout le cluster.
+
+Avec l'approche \textbf{GitOps Pull-based} implémentée dans InnoDeployy :
+\begin{itemize}[label=$\bullet$]
+    \item Jenkins ne possède aucun droit d'accès au cluster Kubernetes. Il se contente de modifier les fichiers YAML du dépôt GitOps.
+    \item Argo CD s'exécute à l'intérieur du cluster Kubernetes. Il surveille en permanence le dépôt GitOps.
+    \item Dès qu'un nouveau commit est détecté, Argo CD compare l'état déclaré avec l'état réel et procède à une synchronisation automatique et progressive.
+    \item En cas de panne de l'application, un retour en arrière (\textit{rollback}) s'effectue en une commande Git : \texttt{git revert}.
+\end{itemize}
+
+\section{Déploiement sur Kubernetes et routage Ingress}
+Pour chaque application déployée, les trois ressources suivantes sont générées :
+\begin{itemize}
+    \item \textbf{Deployment} : Gère le cycle de vie des réplicas du pod applicatif.
+    \item \textbf{Service (ClusterIP)} : Fournit un point de terminaison réseau interne stable et distribue la charge entre les pods.
+    \item \textbf{Ingress} : Configure les règles de routage HTTP de niveau 7 vers le Service correspondant en fonction du nom d'hôte spécifié.
+\end{itemize}
+
+\section{Mise en place de la supervision (Prometheus & Alertmanager)}
+Pour garantir la fiabilité de la plateforme :
+\begin{itemize}[label=$\bullet$]
+    \item \textbf{Prometheus} collecte à intervalles réguliers (toutes les 15 secondes) les métriques de fonctionnement des conteneurs, des nœuds et des services.
+    \item Une règle d'alerte critique (\texttt{InnoDeployBackendDown}) a été configurée pour surveiller en continu la disponibilité du backend.
+    \item \textbf{Alertmanager} est configuré avec un relai SMTP pour expédier immédiatement un courrier électronique à l'administrateur dès qu'un service essentiel est indisponible pendant plus de deux minutes.
+\end{itemize}
+
+\section{Conclusion}
+La combinaison de Jenkins, GHCR, Argo CD et Prometheus offre une chaîne de livraison moderne, sécurisée et hautement observable. Le chapitre suivant présente la validation cloud sur AWS.
+
+\clearpage
+
+% =========================================================================
+% CHAPITRE 7 : DÉPLOIEMENT CLOUD ET VALIDATION
+% =========================================================================
+\chapter{Déploiement cloud et validation}
+
+\section{Introduction}
+Après avoir validé l'architecture en environnement local avec Kind, la solution a été déployée sur l'infrastructure cloud d'Amazon Web Services (AWS). Ce chapitre présente la configuration de l'instance cloud, le déploiement du cluster K3s, les tests de validation de bout en bout, ainsi qu'une analyse objective des résultats et des limites du système.
+
+\section{Infrastructure AWS et configuration de l'instance EC2}
+L'environnement cloud de validation repose sur :
+\begin{itemize}[label=$\bullet$]
+    \item \textbf{Instance Amazon EC2} : De type \texttt{t3.medium} (2 vCPU, 4 Go de mémoire RAM), garantissant un équilibre optimal entre performance de calcul et maîtrise des coûts.
+    \item \textbf{Système d'exploitation} : Ubuntu Server 22.04 LTS (HVM), architecture 64 bits.
+    \item \textbf{Adresse IP Élastique (Elastic IP)} : \texttt{184.195.153.127}, assurant une adresse IP publique fixe et pérenne.
+    \item \textbf{Groupe de sécurité (\textit{Security Group})} : Filtrage réseau autorisant uniquement les flux indispensables (SSH port 22 restreint, HTTP port 80 et HTTPS port 443 ouverts, ports de management protégés).
+\end{itemize}
+
+\section{Installation de K3s et routage dynamique avec Traefik}
+Nous avons sélectionné \textbf{K3s} pour le cluster cloud. K3s intègre nativement le contrôleur Ingress \textbf{Traefik}, qui écoute sur les ports 80 et 443.
+
+Pour attribuer dynamiquement des sous-domaines accessibles sans devoir acheter et configurer une zone DNS payante, nous utilisons le résolveur wildcard \textbf{nip.io}. Chaque application déployée se voit allouer une URL publique normalisée du type :
+\begin{center}
+\texttt{http://user-app-<id>.app.184.195.153.127.nip.io}
+\end{center}
+
+\section{Scénario de test et validation de bout en bout}
+Le test complet a été réalisé avec succès :
+\begin{enumerate}
+    \item Enregistrement d'un projet applicatif connecté au dépôt GitHub d'exemple.
+    \item Clic sur le bouton de déploiement dans l'interface InnoDeployy.
+    \item Le build Jenkins (\#28 puis \#58) a compilé l'image Docker, l'a poussée sur GHCR et a validé le commit sur le dépôt GitOps.
+    \item Argo CD a détecté le changement et synchronisé les ressources sur le cluster K3s.
+    \item L'application cliente est devenue immédiatement accessible sur Internet via son URL publique \texttt{nip.io}.
+\end{enumerate}
+
+\section{Résultats obtenus et analyse des limites}
+\subsection{Résultats obtenus}
+\begin{itemize}[label=$\checkmark$]
+    \item Déploiement entièrement automatisé en moins de 3 minutes chrono.
+    \item Zéro configuration manuelle de serveur requise pour le développeur.
+    \item Traçabilité intégrale via les commits Git et les historiques de builds.
+    \item Alertes emails opérationnelles en cas d'incident.
+\end{itemize}
+
+\subsection{Limites actuelles du prototype}
+\begin{itemize}[label=$\triangle$]
+    \item \textbf{Point unique de défaillance (SPOF)} : L'architecture de test repose sur une unique instance EC2 hébergeant le cluster K3s mono-nœud. En production, un cluster multi-nœuds (AWS EKS ou K3s HA) sera indispensable.
+    \item \textbf{Gestion des secrets applicatifs} : Actuellement basée sur des secrets Kubernetes standards ; l'intégration future d'une solution comme HashiCorp Vault ou Sealed Secrets renforcera la sécurité des variables d'environnement confidentielles.
+\end{itemize}
+
+\section{Conclusion}
+Les tests réalisés sur AWS confirment la viabilité et l'efficacité de la plateforme InnoDeployy pour industrialiser le déploiement d'applications web dans le cloud.
+
+\clearpage
+
+% =========================================================================
+% CONCLUSION GÉNÉRALE & PERSPECTIVES
+% =========================================================================
+\chapter*{Conclusion générale et perspectives}
+\addcontentsline{toc}{chapter}{Conclusion générale et perspectives}
+
+Ce projet de fin d'études a permis de concevoir, développer et valider avec succès \textbf{InnoDeployy}, une plateforme SaaS DevOps complète pour l'automatisation et l'orchestration des déploiements d'applications web.
+
+\section*{Bilan des réalisations}
+En alliant des technologies modernes du génie logiciel et de l'ingénierie cloud, nous avons atteint l'ensemble des objectifs fixés au départ :
+\begin{itemize}[label=$\bullet$]
+    \item \textbf{Une expérience utilisateur simplifiée} : Grâce à un portail web développé sous React, un développeur peut connecter son code source et ordonnancer ses déploiements sans compétences préalables en infrastructure.
+    \item \textbf{Un backend robuste et sécurisé} : Développé en NestJS avec Prisma et PostgreSQL, il garantit la cohérence des données, l'intégrité des requêtes et le contrôle rigoureux des accès via JWT.
+    \item \textbf{Une chaîne d'intégration industrielle} : Jenkins prend en charge la détection du projet, la conteneurisation Docker et le stockage des images sur GitHub Container Registry.
+    \item \textbf{Une conformité GitOps stricte} : L'utilisation conjointe d'un dépôt d'infrastructure dédié et d'Argo CD assure une réconciliation automatique avec Kubernetes (Kind en local, K3s sur AWS), garantissant la traçabilité et facilitant les rollbacks.
+    \item \textbf{Une observabilité proactive} : Prometheus et Alertmanager surveillent l'état des conteneurs et alertent par email en cas d'anomalie.
+\end{itemize}
+
+\section*{Perspectives d'avenir}
+InnoDeployy constitue un socle solide qui ouvre d'importantes perspectives d'évolution :
+\begin{enumerate}
+    \item \textbf{Haute disponibilité et passage à l'échelle} : Déploiement sur un cluster Kubernetes multi-régions (AWS EKS) avec mise à l'échelle automatique des nœuds (\textit{Cluster Autoscaler}).
+    \item \textbf{Sécurisation renforcée des secrets} : Intégration d'un coffre-fort numérique de type HashiCorp Vault ou de solutions telles que Bitnami Sealed Secrets.
+    \item \textbf{Support de catalogues de services (\textit{Templates})} : Prise en charge prête à l'emploi de bases de données gérées en 1 clic (PostgreSQL, Redis, MongoDB conteneurisés).
+    \item \textbf{Assistance intelligente par IA} : Intégration d'un module d'intelligence artificielle capable d'analyser automatiquement les journaux d'erreurs (\textit{build logs}) de Jenkins et de suggérer au développeur la correction exacte de son code ou de sa configuration.
+\end{enumerate}
+
+Ce travail nous a permis d'acquérir une expertise approfondie dans les domaines de l'architecture logicielle, de l'ingénierie DevOps et de l'administration des infrastructures cloud contemporaines.
+
+\clearpage
+
+% =========================================================================
+% BIBLIOGRAPHIE & WEBOGRAPHIE NORMALISÉE
+% =========================================================================
+\chapter*{Bibliographie et webographie}
+\addcontentsline{toc}{chapter}{Bibliographie et webographie}
+
+\begin{enumerate}[label={[\arabic*]}]
+    \item \textbf{React Documentation}, Facebook Open Source. Disponible sur : \url{https://react.dev/}
+    \item \textbf{NestJS Documentation}, Kamil Myśliwiec \& NestJS Core Team. Disponible sur : \url{https://docs.nestjs.com/}
+    \item \textbf{Prisma ORM Documentation}, Prisma Inc. Disponible sur : \url{https://www.prisma.io/docs}
+    \item \textbf{PostgreSQL Global Development Group}, Documentation officielle de PostgreSQL. Disponible sur : \url{https://www.postgresql.org/docs/}
+    \item \textbf{Jenkins User Handbook}, Jenkins CI Community. Disponible sur : \url{https://www.jenkins.io/doc/}
+    \item \textbf{Docker Overview and Documentation}, Docker Inc. Disponible sur : \url{https://docs.docker.com/}
+    \item \textbf{GitHub Docs}, GitHub Container Registry \& REST API. Disponible sur : \url{https://docs.github.com/}
+    \item \textbf{Kubernetes Documentation}, Cloud Native Computing Foundation (CNCF). Disponible sur : \url{https://kubernetes.io/docs/}
+    \item \textbf{K3s Lightweight Kubernetes}, SUSE / Rancher Labs. Disponible sur : \url{https://docs.k3s.io/}
+    \item \textbf{Argo CD Declarative GitOps CD for Kubernetes}, Argo Project (CNCF). Disponible sur : \url{https://argo-cd.readthedocs.io/}
+    \item \textbf{Traefik Proxy Documentation}, Traefik Labs. Disponible sur : \url{https://doc.traefik.io/traefik/}
+    \item \textbf{Prometheus Monitoring System and Time Series Database}, CNCF. Disponible sur : \url{https://prometheus.io/docs/}
+    \item \textbf{Alertmanager Documentation}, Prometheus Authors. Disponible sur : \url{https://prometheus.io/docs/alerting/latest/alertmanager/}
+    \item \textbf{Amazon Web Services}, Documentation Amazon Elastic Compute Cloud (EC2). Disponible sur : \url{https://docs.aws.amazon.com/ec2/}
+    \item \textbf{The DevOps Handbook}, Gene Kim, Jez Humble, Patrick Debois, John Willis, IT Revolution Press, 2016.
+    \item \textbf{GitOps and Kubernetes: Continuous Deployment with Argo CD, Jenkins X, and Flux}, Billy Yuen, Alexander Matyushentsev, Todd Ekenstam, Jesse Suen, Manning Publications, 2021.
+\end{enumerate}
+
+\end{document}

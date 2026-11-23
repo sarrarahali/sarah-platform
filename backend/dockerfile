@@ -1,0 +1,20 @@
+FROM node:18-alpine
+
+WORKDIR /app
+
+# Installation de Docker CLI dans le conteneur backend
+RUN apk add --no-cache docker-cli git
+
+# Dépendances Node.js
+COPY package*.json ./
+RUN npm install --production --legacy-peer-deps
+
+# Code source
+COPY . .
+
+EXPOSE 3000
+
+ENV NODE_ENV=production
+ENV PORT=3000
+
+CMD ["node", "src/app.js"]

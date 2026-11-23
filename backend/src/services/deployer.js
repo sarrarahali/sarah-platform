@@ -10,8 +10,24 @@ const deployApp = async (imageName, appId, exposePort = 3000, dbEnv = {}, networ
     execSync(`docker rm -f ${containerName}`, { stdio: 'ignore' })
   } catch (e) {}
 
-  const envVars = Object.entries(dbEnv)
-    .map(([key, value]) => `-e ${key}="${value}"`)
+  // Fetch custom env vars for this app
+  let customEnv = {}
+  try {
+    const res = await pool.query('SELECT env_vars FROM apps WHERE id = $1', [appId])
+    if (res.rows[0] && res.rows[0].env_vars) {
+      customEnv = typeof res.rows[0].env_vars === 'string'
+        ? JSON.parse(res.rows[0].env_vars)
+        : res.rows[0].env_vars
+    }
+  } catch (err) {
+    console.warn(`[DEPLOY] Could not fetch custom env vars: ${err.message}`)
+  }
+
+  const mergedEnv = { ...dbEnv, ...customEnv }
+
+  const envVars = Object.entries(mergedEnv)
+    .filter(([k]) => /^[a-zA-Z_][a-zA-Z0-9_]*$/.test(k))
+    .map(([key, value]) => `-e ${key}="${String(value).replace(/"/g, '\\"')}"`)
     .join(' ')
 
   const networkFlag = networkName ? `--network ${networkName}` : ''

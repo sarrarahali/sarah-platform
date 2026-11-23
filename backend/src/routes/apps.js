@@ -1,6 +1,16 @@
 const express = require('express')
 const router = express.Router()
-const { createApp, getApps, deleteApp } = require('../controllers/appController')
+const {
+  createApp,
+  getApps,
+  getAppById,
+  deleteApp,
+  stopApp,
+  startApp,
+  restartApp,
+  getAppEnv,
+  updateAppEnv
+} = require('../controllers/appController')
 const protect = require('../middleware/authMiddleware')
 const upload = require('../middleware/upload')
 const { buildApp } = require('../services/builder')
@@ -13,7 +23,25 @@ router.use(protect)
 
 router.post('/', createApp)
 router.get('/', getApps)
+router.get('/:id', getAppById)
 router.delete('/:id', deleteApp)
+router.post('/:id/stop', stopApp)
+router.post('/:id/start', startApp)
+router.post('/:id/restart', restartApp)
+router.get('/:id/env', getAppEnv)
+router.post('/:id/env', updateAppEnv)
+
+router.get('/:id/structure', async (req, res) => {
+  const { id } = req.params
+  const userId = req.user.id
+  try {
+    const result = await pool.query('SELECT structure FROM apps WHERE id = $1 AND user_id = $2', [id, userId])
+    if (result.rows.length === 0) return res.status(404).json({ error: 'Application introuvable' })
+    res.json({ structure: result.rows[0].structure || null })
+  } catch (err) {
+    res.status(500).json({ error: 'Erreur serveur' })
+  }
+})
 
 const getFriendlyError = (rawError) => {
   if (!rawError) return 'Erreur inconnue lors du deploiement.'
@@ -70,6 +98,16 @@ router.post('/:id/upload', upload.single('file'), async (req, res) => {
   try {
     const result = await buildApp(req.file.path, appName)
     const { imageName, exposePort, buildDir } = result
+
+    // Detect and save project structure
+    try {
+      const ProjectDetector = require('../services/projectDetector')
+      const detector = new ProjectDetector(buildDir)
+      const structure = detector.scan()
+      await pool.query('UPDATE apps SET structure = $1 WHERE id = $2', [JSON.stringify(structure), id])
+    } catch (detErr) {
+      console.warn('[PROJECT DETECTOR] Warning:', detErr.message)
+    }
 
     if (result.isCompose) {
       await pool.query(
@@ -147,6 +185,16 @@ router.post('/:id/git', async (req, res) => {
     const { cloneDir } = await cloneRepo(repoUrl)
     const result = await buildApp(cloneDir, appName, true)
     const { imageName, exposePort, buildDir } = result
+
+    // Detect and save project structure
+    try {
+      const ProjectDetector = require('../services/projectDetector')
+      const detector = new ProjectDetector(buildDir)
+      const structure = detector.scan()
+      await pool.query('UPDATE apps SET structure = $1 WHERE id = $2', [JSON.stringify(structure), id])
+    } catch (detErr) {
+      console.warn('[PROJECT DETECTOR] Warning:', detErr.message)
+    }
 
     if (result.isCompose) {
       await pool.query(

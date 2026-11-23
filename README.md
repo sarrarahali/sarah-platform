@@ -4,14 +4,23 @@
 
 ## 🚀 Quick Start
 
-```bash
-cd ~/sarra
-bash start.sh
-# Open: http://localhost:5173
+### Windows (PowerShell)
+```powershell
+.\start.ps1
 ```
+
+### Linux / macOS (Bash)
+```bash
+chmod +x start.sh
+./start.sh
+```
+
+> Accédez à l'application : **http://localhost:5173** (API : **http://localhost:3000**)
 
 ## 📚 Documentation
 
+- **[DEMO_GUIDE.md](./DEMO_GUIDE.md)** - Guide complet de démonstration et soutenance (Scrum & Sprints)
+- **[JENKINS_GUIDE.md](./JENKINS_GUIDE.md)** - Pipeline CI/CD Jenkins (Jenkinsfile & Docker Compose)
 - **[QUICKSTART.md](./QUICKSTART.md)** - 5-minute setup and first deployment
 - **[DEVOPS_GUIDE.md](./DEVOPS_GUIDE.md)** - Complete feature documentation
 - **[DEPLOYMENT_EXAMPLES.md](./DEPLOYMENT_EXAMPLES.md)** - Example configurations

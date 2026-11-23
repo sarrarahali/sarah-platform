@@ -81,6 +81,7 @@ async function migration002() {
     await client.query(`
       ALTER TABLE apps
       ADD COLUMN IF NOT EXISTS structure JSONB,
+      ADD COLUMN IF NOT EXISTS env_vars JSONB DEFAULT '{}'::jsonb,
       ADD COLUMN IF NOT EXISTS git_repo VARCHAR(500),
       ADD COLUMN IF NOT EXISTS last_build_id UUID,
       ADD COLUMN IF NOT EXISTS deployment_config JSONB DEFAULT '{}'::jsonb,

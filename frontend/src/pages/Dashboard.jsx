@@ -99,16 +99,22 @@ export default function Dashboard() {
   }
 
   const deleteApp = async (id) => {
-    await axios.delete(`http://localhost:3000/api/apps/${id}`, {
-      headers: { Authorization: `Bearer ${token}` }
-    })
-    fetchApps()
+    if (!window.confirm('Voulez-vous vraiment supprimer cette application et arrêter ses conteneurs ?')) return
+    try {
+      await axios.delete(`http://localhost:3000/api/apps/${id}`, {
+        headers: { Authorization: `Bearer ${token}` }
+      })
+      fetchApps()
+    } catch (err) {
+      alert('Erreur lors de la suppression de l application')
+    }
   }
 
   const statusColor = (status) => {
     if (status === 'running') return '#22c55e'
     if (status === 'failed') return '#e53e3e'
     if (status === 'building') return '#f59e0b'
+    if (status === 'stopped') return '#f59e0b'
     return '#ccc'
   }
 
@@ -117,7 +123,24 @@ export default function Dashboard() {
     if (status === 'running') return { ...base, background: '#f0fdf4', color: '#16a34a' }
     if (status === 'failed') return { ...base, background: '#fff5f5', color: '#e53e3e' }
     if (status === 'building') return { ...base, background: '#fffbeb', color: '#d97706' }
+    if (status === 'stopped') return { ...base, background: '#fef3c7', color: '#d97706' }
     return { ...base, background: '#f5f5f5', color: '#888' }
+  }
+
+  const getStackBadge = (structure) => {
+    if (!structure) return null
+    try {
+      const s = typeof structure === 'string' ? JSON.parse(structure) : structure
+      const tech = s.frontend?.framework || s.backend?.framework || s.type
+      if (!tech) return null
+      return (
+        <span style={{ fontSize: '10px', padding: '2px 8px', borderRadius: '10px', background: '#f1f5f9', color: '#475569', border: '1px solid #e2e8f0' }}>
+          {tech}
+        </span>
+      )
+    } catch (e) {
+      return null
+    }
   }
 
   return (
@@ -292,6 +315,7 @@ export default function Dashboard() {
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                 <span style={{ fontSize: '13px', fontWeight: '500', color: '#111' }}>{app.name}</span>
                 <span style={badgeStyle(app.status)}>{app.status}</span>
+                {getStackBadge(app.structure)}
               </div>
               <div style={{ display: 'flex', gap: '5px' }}>
                 <Link to={`/app/${app.id}`} style={{
