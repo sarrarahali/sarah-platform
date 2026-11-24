@@ -91,7 +91,7 @@ pipeline {
             echo '==============================================='
         }
         always {
-            cleanWs deleteDirs: true, notFailBuild: true
+            deleteDir()
         }
     }
 }
