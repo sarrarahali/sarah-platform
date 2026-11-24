@@ -27,23 +27,23 @@ sleep 2
 # 3. Installation des dépendances si nécessaire
 if [ ! -d "$PROJECT_ROOT/backend/node_modules" ]; then
     echo "📦 Installation des dépendances Backend..."
-    (cd "$PROJECT_ROOT/backend" && npm install)
+    (cd "$PROJECT_ROOT/backend" && npm install --no-audit --no-fund --legacy-peer-deps)
 fi
 
 if [ ! -d "$PROJECT_ROOT/frontend/node_modules" ]; then
     echo "📦 Installation des dépendances Frontend..."
-    (cd "$PROJECT_ROOT/frontend" && npm install)
+    (cd "$PROJECT_ROOT/frontend" && npm install --no-audit --no-fund --legacy-peer-deps)
 fi
 
 # 4. Lancement Backend et Frontend
-echo "🚀 Lancement du Backend sur http://localhost:3000..."
+echo "🚀 Lancement du Backend sur le port 3000..."
 (cd "$PROJECT_ROOT/backend" && npm run dev) &
 BACKEND_PID=$!
 
-sleep 2
+sleep 3
 
-echo "🚀 Lancement du Frontend sur http://localhost:5173..."
-(cd "$PROJECT_ROOT/frontend" && npm run dev) &
+echo "🚀 Lancement du Frontend sur le port 5173 (0.0.0.0)..."
+(cd "$PROJECT_ROOT/frontend" && npx vite --host 0.0.0.0 --port 5173) &
 FRONTEND_PID=$!
 
 echo ""
