@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react'
 import axios from 'axios'
 import { useAuth } from '../context/AuthContext'
 import { useParams, useNavigate } from 'react-router-dom'
+import { API_BASE_URL } from '../config'
 
 export default function AppDetail() {
   const [app, setApp] = useState(null)
@@ -41,7 +42,7 @@ export default function AppDetail() {
 
   const fetchApp = async () => {
     try {
-      const res = await axios.get(`http://localhost:3000/api/apps/${id}`, {
+      const res = await axios.get(`${API_BASE_URL}/api/apps/${id}`, {
         headers: { Authorization: `Bearer ${token}` }
       })
       setApp(res.data.app)
@@ -50,7 +51,7 @@ export default function AppDetail() {
       }
     } catch (err) {
       try {
-        const resAll = await axios.get('http://localhost:3000/api/apps', {
+        const resAll = await axios.get(`${API_BASE_URL}/api/apps`, {
           headers: { Authorization: `Bearer ${token}` }
         })
         const found = resAll.data.apps?.find(a => a.id === parseInt(id))
@@ -66,7 +67,7 @@ export default function AppDetail() {
 
   const fetchEnv = async () => {
     try {
-      const res = await axios.get(`http://localhost:3000/api/apps/${id}/env`, {
+      const res = await axios.get(`${API_BASE_URL}/api/apps/${id}/env`, {
         headers: { Authorization: `Bearer ${token}` }
       })
       setEnvVars(res.data.env || {})
@@ -75,7 +76,7 @@ export default function AppDetail() {
 
   const fetchStructure = async () => {
     try {
-      const res = await axios.get(`http://localhost:3000/api/apps/${id}/structure`, {
+      const res = await axios.get(`${API_BASE_URL}/api/apps/${id}/structure`, {
         headers: { Authorization: `Bearer ${token}` }
       })
       if (res.data.structure) {
@@ -88,7 +89,7 @@ export default function AppDetail() {
     setEnvSaving(true)
     try {
       const res = await axios.post(
-        `http://localhost:3000/api/apps/${id}/env`,
+        `${API_BASE_URL}/api/apps/${id}/env`,
         { env: updatedEnv },
         { headers: { Authorization: `Bearer ${token}` } }
       )
@@ -120,7 +121,7 @@ export default function AppDetail() {
 
   const fetchStats = async () => {
     try {
-      const res = await axios.get(`http://localhost:3000/api/monitor/${id}/stats`, {
+      const res = await axios.get(`${API_BASE_URL}/api/monitor/${id}/stats`, {
         headers: { Authorization: `Bearer ${token}` }
       })
       setStats(res.data)
@@ -131,7 +132,7 @@ export default function AppDetail() {
 
   const fetchDeployments = async () => {
     try {
-      const res = await axios.get(`http://localhost:3000/api/deployments/${id}/history`, {
+      const res = await axios.get(`${API_BASE_URL}/api/deployments/${id}/history`, {
         headers: { Authorization: `Bearer ${token}` }
       })
       setDeployments(res.data.deployments || [])
@@ -141,7 +142,7 @@ export default function AppDetail() {
   const streamLogs = () => {
     if (!token || !id) return
     const es = new EventSource(
-      `http://localhost:3000/api/monitor/${id}/logs?token=${token}`
+      `${API_BASE_URL}/api/monitor/${id}/logs?token=${token}`
     )
     es.onmessage = (e) => {
       setLogs(prev => prev + e.data + '\n')
@@ -161,7 +162,7 @@ export default function AppDetail() {
     setActionMessage({ text: '', type: 'info' })
     try {
       const res = await axios.post(
-        `http://localhost:3000/api/apps/${id}/${action}`,
+        `${API_BASE_URL}/api/apps/${id}/${action}`,
         {},
         { headers: { Authorization: `Bearer ${token}` } }
       )

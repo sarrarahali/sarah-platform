@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import axios from 'axios'
 import { useAuth } from '../context/AuthContext'
 import { useNavigate, Link } from 'react-router-dom'
+import { API_BASE_URL } from '../config'
 
 export default function Dashboard() {
   const [apps, setApps] = useState([])
@@ -17,7 +18,7 @@ export default function Dashboard() {
 
   const fetchApps = async () => {
     try {
-      const res = await axios.get('http://localhost:3000/api/apps', {
+      const res = await axios.get(`${API_BASE_URL}/api/apps`, {
         headers: { Authorization: `Bearer ${token}` }
       })
       setApps(res.data.apps)
@@ -47,7 +48,7 @@ export default function Dashboard() {
     setLoading(true)
     try {
       const res = await axios.post(
-        'http://localhost:3000/api/apps',
+        `${API_BASE_URL}/api/apps`,
         { name },
         { headers: { Authorization: `Bearer ${token}` } }
       )
@@ -56,7 +57,7 @@ export default function Dashboard() {
         const formData = new FormData()
         formData.append('file', file)
         await axios.post(
-          `http://localhost:3000/api/apps/${appId}/upload`,
+          `${API_BASE_URL}/api/apps/${appId}/upload`,
           formData,
           { headers: { Authorization: `Bearer ${token}` } }
         )
@@ -77,13 +78,13 @@ export default function Dashboard() {
     setGitError('')
     try {
       const res = await axios.post(
-        'http://localhost:3000/api/apps',
+        `${API_BASE_URL}/api/apps`,
         { name: gitName },
         { headers: { Authorization: `Bearer ${token}` } }
       )
       const appId = res.data.app.id
       await axios.post(
-        `http://localhost:3000/api/apps/${appId}/git`,
+        `${API_BASE_URL}/api/apps/${appId}/git`,
         { repoUrl: gitUrl },
         { headers: { Authorization: `Bearer ${token}` } }
       )
@@ -101,7 +102,7 @@ export default function Dashboard() {
   const deleteApp = async (id) => {
     if (!window.confirm('Voulez-vous vraiment supprimer cette application et arrêter ses conteneurs ?')) return
     try {
-      await axios.delete(`http://localhost:3000/api/apps/${id}`, {
+      await axios.delete(`${API_BASE_URL}/api/apps/${id}`, {
         headers: { Authorization: `Bearer ${token}` }
       })
       fetchApps()
