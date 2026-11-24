@@ -2,6 +2,8 @@ const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
 const pool = require('../db')
 
+const JWT_SECRET = process.env.JWT_SECRET || 'super_secret_jwt_key_sarah_platform_2026'
+
 const register = async (req, res) => {
   const { email, password } = req.body
   try {
@@ -26,7 +28,7 @@ const login = async (req, res) => {
     const valid = await bcrypt.compare(password, user.password)
     if (!valid) return res.status(401).json({ error: 'Mot de passe incorrect' })
 
-    const token = jwt.sign({ id: user.id, email: user.email }, process.env.JWT_SECRET, { expiresIn: '7d' })
+    const token = jwt.sign({ id: user.id, email: user.email }, JWT_SECRET, { expiresIn: '7d' })
     res.json({ token })
   } catch (err) {
     res.status(500).json({ error: 'Erreur serveur' })

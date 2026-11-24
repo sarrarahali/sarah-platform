@@ -24,6 +24,12 @@ fi
 
 sleep 2
 
+# Initialisation du .env backend si absent
+if [ ! -f "$PROJECT_ROOT/backend/.env" ] && [ -f "$PROJECT_ROOT/backend/.env.example" ]; then
+    echo "⚙️ Création automatique de backend/.env..."
+    cp "$PROJECT_ROOT/backend/.env.example" "$PROJECT_ROOT/backend/.env"
+fi
+
 # 3. Installation des dépendances si nécessaire
 if [ ! -d "$PROJECT_ROOT/backend/node_modules" ]; then
     echo "📦 Installation des dépendances Backend..."
