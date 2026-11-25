@@ -29,10 +29,10 @@ pipeline {
             steps {
                 echo '=== Installation des packages Backend et Frontend ==='
                 dir('backend') {
-                    sh 'npm install --include=dev --legacy-peer-deps'
+                    sh 'npm install --include=dev --legacy-peer-deps --no-audit --no-fund'
                 }
                 dir('frontend') {
-                    sh 'npm install --include=dev --legacy-peer-deps'
+                    sh 'npm install --include=dev --legacy-peer-deps --no-audit --no-fund'
                 }
             }
         }
