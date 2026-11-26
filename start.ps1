@@ -2,7 +2,7 @@
 $ProjectRoot = $PSScriptRoot
 
 Write-Host "===========================================" -ForegroundColor Cyan
-Write-Host "   Démarrage de Sarah Platform (Windows)   " -ForegroundColor Cyan
+Write-Host "   Démarrage de NexusDeploy (Windows)      " -ForegroundColor Cyan
 Write-Host "===========================================" -ForegroundColor Cyan
 
 # 1. Vérification de Docker
@@ -56,7 +56,7 @@ try {
 }
 
 Write-Host "`n===========================================" -ForegroundColor Green
-Write-Host "✅ Sarah Platform est en cours d'exécution !" -ForegroundColor Green
+Write-Host "✅ NexusDeploy est en cours d'exécution !" -ForegroundColor Green
 Write-Host "🌐 Frontend     : http://localhost:5173" -ForegroundColor White
 Write-Host "⚙️ Backend API   : http://localhost:3000" -ForegroundColor White
 Write-Host "📈 Grafana      : http://localhost:3001 (admin/admin)" -ForegroundColor White

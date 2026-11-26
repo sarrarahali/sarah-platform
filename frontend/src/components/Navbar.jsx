@@ -29,11 +29,12 @@ export default function Navbar() {
         <span style={{
           background: '#7c3aed',
           color: 'white',
-          padding: '2px 10px',
+          padding: '2px 8px',
           borderRadius: '6px',
-          fontSize: '0.9rem'
-        }}>S</span>
-        Sarah Platform
+          fontSize: '0.85rem',
+          fontWeight: '700'
+        }}>ND</span>
+        NexusDeploy
       </Link>
       <div>
         {token ? (

@@ -4,7 +4,7 @@
 PROJECT_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 echo "==========================================="
-echo "   Démarrage de Sarah Platform (PaaS)      "
+echo "   Démarrage de NexusDeploy (PaaS Cloud)   "
 echo "==========================================="
 
 # 1. Vérification Docker
@@ -57,7 +57,7 @@ docker compose up -d prometheus alertmanager grafana 2>/dev/null || true
 
 echo ""
 echo "==========================================="
-echo "✅ Sarah Platform est prête !"
+echo "✅ NexusDeploy est prête !"
 echo "🌐 Frontend     : http://localhost:5173"
 echo "⚙️ Backend API   : http://localhost:3000"
 echo "📈 Grafana      : http://localhost:3001 (admin/admin)"

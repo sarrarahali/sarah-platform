@@ -20,7 +20,7 @@ app.use('/api/deployments', deploymentRoutes)
 app.use('/metrics', metricsRoutes)
 
 app.get('/', (req, res) => {
-  res.json({ message: 'Sarah API is running' })
+  res.json({ message: 'NexusDeploy API is running', platform: 'NexusDeploy', version: '2.0.0', status: 'healthy' })
 })
 
 const PORT = process.env.PORT || 3000

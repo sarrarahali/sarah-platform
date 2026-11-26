@@ -1,4 +1,4 @@
-# Sarra Platform - PaaS with Advanced DevOps
+# NexusDeploy - Modern PaaS with Real-Time Observability & Advanced DevOps
 
 > Automated deployment platform for full-stack web applications with intelligent project detection and Docker orchestration.
 

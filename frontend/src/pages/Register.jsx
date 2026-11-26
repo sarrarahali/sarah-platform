@@ -45,13 +45,13 @@ export default function Register() {
           <span style={{
             background: '#7c3aed',
             color: 'white',
-            padding: '4px 16px',
+            padding: '4px 14px',
             borderRadius: '8px',
-            fontSize: '1.5rem',
+            fontSize: '1.4rem',
             fontWeight: '700'
-          }}>S</span>
+          }}>ND</span>
           <h2 style={{ marginTop: '1rem', fontSize: '1.5rem', color: '#1a1a2e' }}>Inscription</h2>
-          <p style={{ color: '#888', marginTop: '0.5rem' }}>Creez votre compte Sarah Platform</p>
+          <p style={{ color: '#888', marginTop: '0.5rem' }}>Créez votre compte NexusDeploy</p>
         </div>
 
         {error && (

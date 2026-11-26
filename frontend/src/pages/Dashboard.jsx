@@ -162,13 +162,34 @@ export default function Dashboard() {
       }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
           <div style={{
-            width: '26px', height: '26px', background: '#7c3aed',
+            width: '28px', height: '26px', background: '#7c3aed',
             borderRadius: '6px', display: 'flex', alignItems: 'center',
-            justifyContent: 'center', color: '#fff', fontSize: '13px', fontWeight: '500'
-          }}>S</div>
-          <span style={{ fontSize: '14px', fontWeight: '500', color: '#111' }}>Sarah Platform</span>
+            justifyContent: 'center', color: '#fff', fontSize: '11px', fontWeight: '700'
+          }}>ND</div>
+          <span style={{ fontSize: '14px', fontWeight: '600', color: '#111' }}>NexusDeploy</span>
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+          <a
+            href={`http://${window.location.hostname}:3001`}
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{
+              fontSize: '12px',
+              color: '#7c3aed',
+              border: '0.5px solid #c4b5fd',
+              padding: '4px 10px',
+              borderRadius: '6px',
+              background: '#f5f3ff',
+              textDecoration: 'none',
+              fontWeight: '500',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '4px'
+            }}
+          >
+            📊 Grafana
+          </a>
+          <div style={{ width: '0.5px', height: '14px', background: '#e5e7eb' }} />
           <span style={{ fontSize: '12px', color: '#888' }}>
             {token ? JSON.parse(atob(token.split('.')[1])).email : ''}
           </span>
