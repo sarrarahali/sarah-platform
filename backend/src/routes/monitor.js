@@ -3,9 +3,46 @@ const router = express.Router()
 const { spawn } = require('child_process')
 const protect = require('../middleware/authMiddleware')
 
-router.use(protect)
+// Recent alerts cache
+const receivedAlerts = []
 
-router.get('/:id/logs', (req, res) => {
+// Webhook endpoint for Prometheus Alertmanager (no auth needed so Alertmanager can POST)
+router.post('/alerts', (req, res) => {
+  const alertData = req.body
+  const timestamp = new Date().toISOString()
+  
+  if (alertData.alerts && Array.isArray(alertData.alerts)) {
+    alertData.alerts.forEach(a => {
+      receivedAlerts.unshift({
+        receivedAt: timestamp,
+        status: a.status,
+        alertname: a.labels?.alertname,
+        severity: a.labels?.severity,
+        summary: a.annotations?.summary,
+        description: a.annotations?.description
+      })
+    })
+  } else {
+    receivedAlerts.unshift({ receivedAt: timestamp, raw: alertData })
+  }
+
+  // Keep last 50 alerts
+  if (receivedAlerts.length > 50) receivedAlerts.length = 50
+
+  console.log(`[ALERTMANAGER WEBHOOK] Received ${alertData.alerts?.length || 1} alert(s)`)
+  res.status(200).json({ status: 'ok', received: receivedAlerts.length })
+})
+
+// Public or dashboard route to read alerts
+router.get('/alerts', (req, res) => {
+  res.json({
+    count: receivedAlerts.length,
+    alerts: receivedAlerts
+  })
+})
+
+// Protected container logs and stats
+router.get('/:id/logs', protect, (req, res) => {
   const containerName = `sarah-container-${req.params.id}`
 
   res.setHeader('Content-Type', 'text/event-stream')
@@ -27,7 +64,7 @@ router.get('/:id/logs', (req, res) => {
   })
 })
 
-router.get('/:id/stats', (req, res) => {
+router.get('/:id/stats', protect, (req, res) => {
   const containerName = `sarah-container-${req.params.id}`
   const { execSync } = require('child_process')
 

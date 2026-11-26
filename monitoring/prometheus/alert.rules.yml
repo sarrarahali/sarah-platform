@@ -1,0 +1,29 @@
+groups:
+  - name: paas_alerts
+    rules:
+      - alert: PaaSBackendDown
+        expr: up{job="paas-backend-api"} == 0
+        for: 30s
+        labels:
+          severity: critical
+        annotations:
+          summary: "PaaS Backend API is down"
+          description: "The PaaS API at host.docker.internal:3000 has not responded for more than 30 seconds."
+
+      - alert: HighMemoryUsage
+        expr: paas_process_resident_memory_bytes > 500000000
+        for: 1m
+        labels:
+          severity: warning
+        annotations:
+          summary: "PaaS API memory usage is high"
+          description: "PaaS API process resident memory is above 500 MB (current: {{ $value | humanize1024 }}B)."
+
+      - alert: HighHttpErrorRate
+        expr: rate(paas_http_requests_total{status=~"5.."}[2m]) > 0.05
+        for: 1m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High HTTP 5xx error rate detected"
+          description: "PaaS API is returning 5xx server errors over the last 2 minutes."

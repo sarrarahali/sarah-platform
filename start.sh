@@ -52,11 +52,17 @@ echo "🚀 Lancement du Frontend sur le port 5173 (0.0.0.0)..."
 (cd "$PROJECT_ROOT/frontend" && npx vite --host 0.0.0.0 --port 5173) &
 FRONTEND_PID=$!
 
+echo "📊 Démarrage de la suite de monitoring (Prometheus, Alertmanager, Grafana)..."
+docker compose up -d prometheus alertmanager grafana 2>/dev/null || true
+
 echo ""
 echo "==========================================="
 echo "✅ Sarah Platform est prête !"
-echo "🌐 Frontend : http://localhost:5173"
-echo "⚙️ Backend  : http://localhost:3000"
+echo "🌐 Frontend     : http://localhost:5173"
+echo "⚙️ Backend API   : http://localhost:3000"
+echo "📈 Grafana      : http://localhost:3001 (admin/admin)"
+echo "🔥 Prometheus   : http://localhost:9090"
+echo "🚨 Alertmanager : http://localhost:9093"
 echo "==========================================="
 echo "Appuyez sur Ctrl+C pour arrêter les serveurs."
 

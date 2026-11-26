@@ -47,8 +47,19 @@ Start-Sleep -Seconds 2
 Write-Host "🚀 Lancement du Frontend (Port 5173)..." -ForegroundColor Cyan
 Start-Process powershell -ArgumentList "-NoExit", "-Command", "cd '$ProjectRoot\frontend'; npm run dev"
 
+Write-Host "`n📊 Démarrage de la suite de monitoring (Prometheus, Alertmanager, Grafana)..." -ForegroundColor Yellow
+try {
+    docker compose up -d prometheus alertmanager grafana 2>$null
+    Write-Host "✓ Conteneurs de monitoring démarrés" -ForegroundColor Green
+} catch {
+    Write-Host "ℹ️ Monitoring non démarré (facultatif)" -ForegroundColor Gray
+}
+
 Write-Host "`n===========================================" -ForegroundColor Green
 Write-Host "✅ Sarah Platform est en cours d'exécution !" -ForegroundColor Green
-Write-Host "🌐 Frontend : http://localhost:5173" -ForegroundColor White
-Write-Host "⚙️ Backend  : http://localhost:3000" -ForegroundColor White
+Write-Host "🌐 Frontend     : http://localhost:5173" -ForegroundColor White
+Write-Host "⚙️ Backend API   : http://localhost:3000" -ForegroundColor White
+Write-Host "📈 Grafana      : http://localhost:3001 (admin/admin)" -ForegroundColor White
+Write-Host "🔥 Prometheus   : http://localhost:9090" -ForegroundColor White
+Write-Host "🚨 Alertmanager : http://localhost:9093" -ForegroundColor White
 Write-Host "===========================================" -ForegroundColor Green
